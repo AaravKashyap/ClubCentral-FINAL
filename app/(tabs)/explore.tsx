@@ -17,7 +17,10 @@ export default function ExploreScreen() {
   const [selectedCategory, setSelectedCategory] = useState<ClubCategory | null>(null);
   const [filteredClubs, setFilteredClubs] = useState<Club[]>([]);
   
-  const clubs = useMemo(() => mockClubs, []);
+  const clubs = useMemo(() => {
+    console.log('Explore screen - clubs loaded:', mockClubs.length);
+    return mockClubs;
+  }, []);
   
   useEffect(() => {
     // Filter clubs based on search query and selected category
