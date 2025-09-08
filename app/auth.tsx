@@ -20,7 +20,7 @@ export default function AuthScreen() {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [selectedRole, setSelectedRole] = useState<UserRole>('student');
-  const [clubId, setClubId] = useState('');
+  const [clubName, setClubName] = useState('');
   
   const { login, signup, isLoading } = useAuth();
   const router = useRouter();
@@ -29,6 +29,11 @@ export default function AuthScreen() {
   const handleAuth = async () => {
     if (!email || !password || (!isLogin && !name)) {
       Alert.alert('Error', 'Please fill in all required fields');
+      return;
+    }
+
+    if (!isLogin && selectedRole === 'admin' && !clubName.trim()) {
+      Alert.alert('Error', 'Please enter your club name for verification');
       return;
     }
 
@@ -41,7 +46,7 @@ export default function AuthScreen() {
           password,
           name,
           role: selectedRole,
-          clubId: selectedRole === 'admin' ? clubId : undefined,
+          clubName: selectedRole === 'admin' ? clubName : undefined,
         });
       }
       router.replace('/(tabs)');
@@ -128,9 +133,10 @@ export default function AuthScreen() {
               {selectedRole === 'admin' && (
                 <TextInput
                   style={styles.input}
-                  placeholder="Club Name (will be verified by admin)"
-                  value={clubId}
-                  onChangeText={setClubId}
+                  placeholder="Club Name (will be verified by super admin)"
+                  value={clubName}
+                  onChangeText={setClubName}
+                  autoCapitalize="words"
                 />
               )}
             </>

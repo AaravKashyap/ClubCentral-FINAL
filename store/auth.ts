@@ -204,6 +204,7 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
         name: signupData.name,
         role: signupData.role,
         clubId: signupData.clubId,
+        clubName: signupData.clubName,
         isApproved: signupData.role === 'student',
         createdAt: new Date().toISOString(),
       };
@@ -234,6 +235,7 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
         userName: newAdmin.name,
         userEmail: newAdmin.email,
         clubId: newAdmin.clubId,
+        clubName: newAdmin.clubName,
         createdAt: new Date().toISOString(),
         read: false,
       });

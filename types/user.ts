@@ -6,6 +6,7 @@ export type User = {
   name: string;
   role: UserRole;
   clubId?: string; // For admin users, the club they manage
+  clubName?: string; // For admin users, the name of their club
   isApproved: boolean; // For admin users, whether they're approved by super admin
   createdAt: string;
   password?: string; // For super admin authentication
@@ -28,4 +29,5 @@ export type SignupData = {
   name: string;
   role: UserRole;
   clubId?: string;
+  clubName?: string;
 };

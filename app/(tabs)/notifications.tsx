@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -9,31 +9,59 @@ import {
   RefreshControl,
 } from 'react-native';
 import { Stack } from 'expo-router';
-import { Check, Clock, User, Mail } from 'lucide-react-native';
+import { Check, Clock, User, Mail, Building } from 'lucide-react-native';
 import Colors from '@/constants/colors';
 import { useAuth } from '@/store/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+interface Notification {
+  id: string;
+  type: string;
+  userId: string;
+  userName: string;
+  userEmail: string;
+  clubId?: string;
+  clubName?: string;
+  createdAt: string;
+  read: boolean;
+}
 
 export default function NotificationsScreen() {
-  const { user } = useAuth();
-  
-  // Mock notifications - in real app this would come from server
-  const mockNotifications = user?.role === 'super_admin' ? [
-    {
-      id: '1',
-      userName: 'John Doe',
-      userEmail: 'john.doe@example.com',
-      clubName: 'Robotics Club',
-      userId: 'user1',
-      createdAt: new Date().toISOString()
-    }
-  ] : [];
-  
-  const [isApproving, setIsApproving] = React.useState(false);
+  const { user, approveAdmin } = useAuth();
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [isApproving, setIsApproving] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const handleApproveAdmin = async (notification: any) => {
+  const loadNotifications = useCallback(async () => {
+    if (user?.role !== 'super_admin') return;
+    
+    try {
+      const notificationsData = await AsyncStorage.getItem('admin_notifications');
+      if (notificationsData) {
+        const allNotifications = JSON.parse(notificationsData);
+        // Filter out already processed notifications
+        const pendingNotifications = allNotifications.filter((n: Notification) => !n.read);
+        setNotifications(pendingNotifications);
+      }
+    } catch (error) {
+      console.error('Error loading notifications:', error);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    loadNotifications();
+  }, [loadNotifications]);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await loadNotifications();
+    setRefreshing(false);
+  }, [loadNotifications]);
+
+  const handleApproveAdmin = async (notification: Notification) => {
     Alert.alert(
       'Approve Admin',
-      `Are you sure you want to approve ${notification.userName} as an admin for ${notification.clubName}?`,
+      `Are you sure you want to approve ${notification.userName} as an admin for ${notification.clubName || 'their club'}?`,
       [
         { text: 'Cancel', style: 'cancel' },
         {
@@ -41,11 +69,26 @@ export default function NotificationsScreen() {
           style: 'default',
           onPress: async () => {
             setIsApproving(true);
-            // Simulate API call
-            setTimeout(() => {
-              setIsApproving(false);
+            try {
+              await approveAdmin(notification.userId);
+              
+              // Mark notification as read
+              const notificationsData = await AsyncStorage.getItem('admin_notifications');
+              if (notificationsData) {
+                const allNotifications = JSON.parse(notificationsData);
+                const updatedNotifications = allNotifications.map((n: Notification) => 
+                  n.id === notification.id ? { ...n, read: true } : n
+                );
+                await AsyncStorage.setItem('admin_notifications', JSON.stringify(updatedNotifications));
+              }
+              
               Alert.alert('Success', 'Admin approved successfully!');
-            }, 1000);
+              await loadNotifications();
+            } catch (error) {
+              Alert.alert('Error', 'Failed to approve admin');
+            } finally {
+              setIsApproving(false);
+            }
           },
         },
       ]
@@ -67,7 +110,7 @@ export default function NotificationsScreen() {
     }
   };
 
-  const renderNotification = (notification: any) => (
+  const renderNotification = (notification: Notification) => (
     <View key={notification.id} style={styles.notificationCard}>
       <View style={styles.notificationHeader}>
         <View style={styles.iconContainer}>
@@ -92,6 +135,7 @@ export default function NotificationsScreen() {
         </View>
         {notification.clubName && (
           <View style={styles.detailRow}>
+            <Building size={16} color={Colors.textSecondary} />
             <Text style={styles.detailLabel}>Club:</Text>
             <Text style={styles.detailText}>{notification.clubName}</Text>
           </View>
@@ -113,14 +157,28 @@ export default function NotificationsScreen() {
     </View>
   );
 
-  const notifications = mockNotifications;
+  if (user?.role !== 'super_admin') {
+    return (
+      <View style={styles.container}>
+        <Stack.Screen options={{ title: 'Notifications' }} />
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>Access Restricted</Text>
+          <Text style={styles.emptySubtext}>
+            Only super admins can view notifications
+          </Text>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
       <Stack.Screen options={{ title: 'Notifications' }} />
       <ScrollView
         style={styles.scrollView}
-
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       >
         <View style={styles.header}>
           <Text style={styles.subtitle}>
