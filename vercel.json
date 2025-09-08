@@ -1,6 +1,6 @@
 {
-"buildCommand": "bun run build:web",
-"outputDirectory": "dist",
-"framework": null,
-"installCommand": "bun install"
+  "buildCommand": "npx expo export --platform web",
+  "outputDirectory": "dist",
+  "framework": null,
+  "installCommand": "npm install --legacy-peer-deps"
 }

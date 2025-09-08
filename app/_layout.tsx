@@ -2,15 +2,11 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import Colors from "@/constants/colors";
 import { AuthProvider } from '@/store/auth';
 import AuthGuard from '@/components/AuthGuard';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { trpc } from '@/lib/trpc';
-import { httpLink } from '@trpc/client';
-import superjson from 'superjson';
 
 
 
@@ -22,18 +18,6 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const [queryClient] = useState(() => new QueryClient());
-  const [trpcClient] = useState(() => trpc.createClient({
-    links: [
-      httpLink({
-        url: process.env.EXPO_PUBLIC_RORK_API_BASE_URL ? 
-          `${process.env.EXPO_PUBLIC_RORK_API_BASE_URL}/api/trpc` : 
-          `${typeof window !== 'undefined' ? window.location.origin : 'http://localhost:8081'}/api/trpc`,
-        transformer: superjson,
-      }),
-    ],
-  }));
-  
   const [loaded, error] = useFonts({
     ...FontAwesome.font,
   });
@@ -56,15 +40,11 @@ export default function RootLayout() {
   }
 
   return (
-    <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <AuthGuard>
-            <RootLayoutNav />
-          </AuthGuard>
-        </AuthProvider>
-      </QueryClientProvider>
-    </trpc.Provider>
+    <AuthProvider>
+      <AuthGuard>
+        <RootLayoutNav />
+      </AuthGuard>
+    </AuthProvider>
   );
 }
 
@@ -100,13 +80,6 @@ function RootLayoutNav() {
           name="backend-test" 
           options={{ 
             title: "Backend Test",
-            headerBackTitle: "Back",
-          }} 
-        />
-        <Stack.Screen 
-          name="debug" 
-          options={{ 
-            title: "Debug",
             headerBackTitle: "Back",
           }} 
         />
