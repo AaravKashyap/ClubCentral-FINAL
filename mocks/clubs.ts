@@ -39,6 +39,7 @@ const generateMeetings = (
     
     for (let dayOfMonth = 1; dayOfMonth <= daysInMonth; dayOfMonth++) {
       const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), dayOfMonth);
+      // Important: getDay() returns 0 for Sunday, 1 for Monday, etc.
       if (date.getDay() === targetDayIndex) {
         occurrences.push(new Date(date)); // Create a new Date object to avoid reference issues
       }
