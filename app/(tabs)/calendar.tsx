@@ -15,7 +15,8 @@ export default function CalendarScreen() {
 
   
   useEffect(() => {
-    const upcomingMeetings = getUpcomingMeetings(50); // Get more meetings for calendar view
+    const upcomingMeetings = getUpcomingMeetings(100); // Get more meetings for calendar view
+    console.log('Calendar: loaded meetings:', upcomingMeetings.length);
     setMeetings(upcomingMeetings);
     
     // Group meetings by date
@@ -28,15 +29,18 @@ export default function CalendarScreen() {
       return acc;
     }, {});
     
-    const sectionsData = Object.keys(groupedMeetings).sort().map(date => ({
-      title: new Date(date).toLocaleDateString('en-US', { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-      }),
-      data: groupedMeetings[date]
-    }));
+    const sectionsData = Object.keys(groupedMeetings).sort().map(date => {
+      const meetingDate = new Date(date + 'T00:00:00'); // Ensure proper date parsing
+      return {
+        title: meetingDate.toLocaleDateString('en-US', { 
+          weekday: 'long', 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        }),
+        data: groupedMeetings[date]
+      };
+    });
     
     setSections(sectionsData);
   }, []);
@@ -81,6 +85,7 @@ export default function CalendarScreen() {
         ]}
         stickySectionHeadersEnabled={true}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
       />
     </View>
   );

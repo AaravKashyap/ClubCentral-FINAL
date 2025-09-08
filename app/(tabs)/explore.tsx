@@ -102,6 +102,8 @@ export default function ExploreScreen() {
       ListHeaderComponent={renderHeader}
       ListEmptyComponent={renderEmptyState}
       showsVerticalScrollIndicator={false}
+      keyboardShouldPersistTaps="handled"
+      keyboardDismissMode="on-drag"
     />
   );
 }
