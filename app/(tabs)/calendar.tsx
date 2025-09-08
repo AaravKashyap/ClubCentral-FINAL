@@ -4,40 +4,28 @@ import Colors from "@/constants/colors";
 import MeetingItem from "@/components/MeetingItem";
 import EmptyState from "@/components/EmptyState";
 import { Calendar } from "lucide-react-native";
-import { getUpcomingMeetings } from "@/mocks/clubs";
+import { trpc } from "@/lib/trpc";
 
 export default function CalendarScreen() {
   const [meetings, setMeetings] = useState<any[]>([]);
   const [sections, setSections] = useState<any[]>([]);
   
-
+  const clubsQuery = trpc.clubs.getAll.useQuery();
   
   useEffect(() => {
-    const upcomingMeetings = getUpcomingMeetings();
-    setMeetings(upcomingMeetings);
+    if (!clubsQuery.data) return;
     
-    // Group meetings by date
-    const groupedMeetings = upcomingMeetings.reduce((acc: any, item: any) => {
-      const date = item.meeting.date;
-      if (!acc[date]) {
-        acc[date] = [];
-      }
-      acc[date].push(item);
-      return acc;
-    }, {});
+    // Generate upcoming meetings based on club meeting days
+    const allMeetings: any[] = [];
     
-    const sectionsData = Object.keys(groupedMeetings).map(date => ({
-      title: new Date(date).toLocaleDateString('en-US', { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-      }),
-      data: groupedMeetings[date]
-    }));
+    clubsQuery.data.forEach(club => {
+      // For now, we'll show empty calendar since no specific meeting dates are set
+      // Clubs can add specific meeting dates through their admin interface
+    });
     
-    setSections(sectionsData);
-  }, []);
+    setMeetings(allMeetings);
+    setSections([]);
+  }, [clubsQuery.data]);
   
   const renderHeader = () => (
     <View style={styles.headerContainer}>

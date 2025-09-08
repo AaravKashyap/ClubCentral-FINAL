@@ -7,7 +7,7 @@ import { Heart, Mail, Instagram, Globe, Users, Calendar, MapPin, Clock, Info, Im
 import Colors from "@/constants/colors";
 import { useFavoritesStore } from "@/store/favorites";
 import MeetingItem from "@/components/MeetingItem";
-import { clubs } from "@/mocks/clubs";
+import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/store/auth";
 
 export default function ClubDetailScreen() {
@@ -18,21 +18,69 @@ export default function ClubDetailScreen() {
   const [isEditingImage, setIsEditingImage] = useState(false);
   const [newImageUrl, setNewImageUrl] = useState('');
   
+  const clubsQuery = trpc.clubs.getAll.useQuery(undefined, {
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+  const clubs = clubsQuery.data || [];
   const club = clubs.find(c => c.id === id);
   
-  // Mock membership status - in real app this would come from user data
-  const isMember = user?.role === 'student' && ['1', '3', '7'].includes(id || '');
+  // Check if user is a member of this club
+  const isMemberQuery = trpc.clubs.isUserMember.useQuery(
+    { clubId: id || '' },
+    { enabled: !!id && user?.role === 'student', retry: false }
+  );
   
-  // Mock member count - in real app this would come from server
-  const memberCount = club?.memberCount || 0;
+  // Get club member count
+  const clubMembersQuery = trpc.clubs.getClubMembers.useQuery(
+    { clubId: id || '' },
+    { enabled: !!id, retry: false }
+  );
   
-  const [isLeaving, setIsLeaving] = useState(false);
+  const joinClubMutation = trpc.clubs.join.useMutation({
+    onSuccess: () => {
+      Alert.alert('Success', 'You have successfully joined the club!');
+      isMemberQuery.refetch();
+      clubMembersQuery.refetch();
+    },
+    onError: (error) => {
+      Alert.alert('Error', error.message || 'Failed to join club');
+    },
+    onSettled: () => {
+      setIsJoining(false);
+    }
+  });
   
-  const [isUpdating, setIsUpdating] = useState(false);
+  const leaveClubMutation = trpc.clubs.leave.useMutation({
+    onSuccess: () => {
+      Alert.alert('Success', 'You have left the club.');
+      isMemberQuery.refetch();
+      clubMembersQuery.refetch();
+    },
+    onError: (error) => {
+      Alert.alert('Error', error.message || 'Failed to leave club');
+    }
+  });
   
-
+  const updateClubMutation = trpc.clubs.update.useMutation({
+    onSuccess: () => {
+      Alert.alert('Success', 'Club image updated successfully!');
+      setIsEditingImage(false);
+      setNewImageUrl('');
+      clubsQuery.refetch();
+    },
+    onError: (error) => {
+      Alert.alert('Error', error.message || 'Failed to update club image');
+    }
+  });
   
-
+  if (clubsQuery.isLoading) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.errorText}>Loading...</Text>
+      </View>
+    );
+  }
   
   if (!club) {
     return (
@@ -64,40 +112,32 @@ export default function ClubDetailScreen() {
     }
   };
   
-  const handleJoinLeavePress = async () => {
+  const handleJoinLeavePress = () => {
     if (!id) return;
     
-    if (isMember) {
-      setIsLeaving(true);
-      // Simulate API call
-      setTimeout(() => {
-        setIsLeaving(false);
-        Alert.alert('Success', 'You have left the club.');
-      }, 1000);
+    setIsJoining(true);
+    
+    if (isMemberQuery.data) {
+      // User is already a member, so leave the club
+      leaveClubMutation.mutate({ clubId: id });
     } else {
-      setIsJoining(true);
-      // Simulate API call
-      setTimeout(() => {
-        setIsJoining(false);
-        Alert.alert('Success', 'You have successfully joined the club!');
-      }, 1000);
+      // User is not a member, so join the club
+      joinClubMutation.mutate({ clubId: id });
     }
   };
   
-  const handleUpdateImage = async () => {
+  const handleUpdateImage = () => {
     if (!id || !newImageUrl.trim()) {
       Alert.alert('Error', 'Please enter a valid image URL');
       return;
     }
     
-    setIsUpdating(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsUpdating(false);
-      Alert.alert('Success', 'Club image updated successfully!');
-      setIsEditingImage(false);
-      setNewImageUrl('');
-    }, 1000);
+    updateClubMutation.mutate({
+      clubId: id,
+      updates: {
+        imageUrl: newImageUrl.trim()
+      }
+    });
   };
   
   const handleRemoveImage = () => {
@@ -111,13 +151,13 @@ export default function ClubDetailScreen() {
         {
           text: 'Remove',
           style: 'destructive',
-          onPress: async () => {
-            setIsUpdating(true);
-            // Simulate API call
-            setTimeout(() => {
-              setIsUpdating(false);
-              Alert.alert('Success', 'Club image removed successfully!');
-            }, 1000);
+          onPress: () => {
+            updateClubMutation.mutate({
+              clubId: id,
+              updates: {
+                imageUrl: null
+              }
+            });
           }
         }
       ]
@@ -189,11 +229,11 @@ export default function ClubDetailScreen() {
             <Pressable 
               style={[styles.editImageButton, styles.saveButton]}
               onPress={handleUpdateImage}
-              disabled={isUpdating}
+              disabled={updateClubMutation.isPending}
             >
               <Save size={16} color="white" />
               <Text style={styles.saveButtonText}>
-                {isUpdating ? 'Saving...' : 'Save'}
+                {updateClubMutation.isPending ? 'Saving...' : 'Save'}
               </Text>
             </Pressable>
           </View>
@@ -225,15 +265,15 @@ export default function ClubDetailScreen() {
             <Pressable 
               style={[
                 styles.joinButton, 
-                isMember ? styles.leaveButton : styles.joinButtonActive,
-                (isJoining || isLeaving) && styles.disabledButton
+                isMemberQuery.data ? styles.leaveButton : styles.joinButtonActive,
+                isJoining && styles.disabledButton
               ]}
               onPress={handleJoinLeavePress}
-              disabled={isJoining || isLeaving}
+              disabled={isJoining || isMemberQuery.isLoading}
             >
               <Users size={20} color="white" />
               <Text style={styles.joinText}>
-                {(isJoining || isLeaving) ? 'Loading...' : isMember ? 'Leave Club' : 'Join Club'}
+                {isJoining ? 'Loading...' : isMemberQuery.data ? 'Leave Club' : 'Join Club'}
               </Text>
             </Pressable>
           )}
@@ -246,7 +286,7 @@ export default function ClubDetailScreen() {
         <View style={styles.infoRow}>
           <Users size={18} color={Colors.textSecondary} />
           <Text style={styles.infoText}>
-            {memberCount} members
+            {clubMembersQuery.data?.memberCount || 0} members
           </Text>
         </View>
         
@@ -259,7 +299,7 @@ export default function ClubDetailScreen() {
         
         <View style={styles.infoRow}>
           <Clock size={18} color={Colors.textSecondary} />
-          <Text style={styles.infoText}>{club.meetingFrequency} on {club.meetingDay}s</Text>
+          <Text style={styles.infoText}>{club.meetingDay} at {club.meetingTime}</Text>
         </View>
         
         {club.meetingLocation && (

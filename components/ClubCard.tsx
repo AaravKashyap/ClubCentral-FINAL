@@ -33,12 +33,11 @@ export default function ClubCard({ club, compact = false }: ClubCardProps) {
         style={styles.compactContainer} 
         onPress={handlePress}
       >
-        {club.imageUrl && club.imageUrl.trim() !== '' && club.imageUrl !== 'undefined' ? (
+        {club.imageUrl ? (
           <Image 
             source={{ uri: club.imageUrl }}
             style={styles.compactImage}
             contentFit="cover"
-            onError={() => console.log('Image failed to load:', club.imageUrl)}
           />
         ) : (
           <View style={[styles.compactImage, styles.placeholderImage]}>
@@ -69,12 +68,11 @@ export default function ClubCard({ club, compact = false }: ClubCardProps) {
       style={styles.container} 
       onPress={handlePress}
     >
-      {club.imageUrl && club.imageUrl.trim() !== '' && club.imageUrl !== 'undefined' ? (
+      {club.imageUrl ? (
         <Image 
           source={{ uri: club.imageUrl }}
           style={styles.image}
           contentFit="cover"
-          onError={() => console.log('Image failed to load:', club.imageUrl)}
         />
       ) : (
         <View style={[styles.image, styles.placeholderImage]}>

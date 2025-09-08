@@ -7,24 +7,26 @@ import Colors from "@/constants/colors";
 import ClubCard from "@/components/ClubCard";
 import MeetingItem from "@/components/MeetingItem";
 import { useAuth } from "@/store/auth";
-import { clubs } from "@/mocks/clubs";
+import { trpc } from "@/lib/trpc";
 
 export default function HomeScreen() {
   const router = useRouter();
   const { user, totalUsers, logout } = useAuth();
   const [upcomingMeetings, setUpcomingMeetings] = useState<any[]>([]);
   
-  const allClubs = clubs;
+  const clubsQuery = trpc.clubs.getAll.useQuery(undefined, {
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+  const clubs = clubsQuery.data || [];
   
   useEffect(() => {
-    console.log('Home screen loaded, clubs count:', allClubs.length);
-    console.log('First club:', allClubs[0]);
     // No upcoming meetings for now since we removed fake data
     setUpcomingMeetings([]);
-  }, [allClubs]);
+  }, []);
   
   // Get featured clubs (first 3 clubs)
-  const featuredClubs = allClubs.slice(0, 3);
+  const featuredClubs = clubs.slice(0, 3);
   
   const handleExplorePress = () => {
     router.push("/explore");
@@ -60,9 +62,6 @@ export default function HomeScreen() {
         <Text style={styles.heroSubtitle}>
           Welcome {user?.name}! Discover and connect with all the amazing clubs on campus.
         </Text>
-        <Text style={styles.debugText}>
-          DEBUG: {allClubs.length} clubs loaded
-        </Text>
         <Text style={styles.userInfo}>
           Role: {user?.role === 'super_admin' ? 'Super Admin' : user?.role === 'admin' ? 'Club President' : 'Student'}
         </Text>
@@ -75,7 +74,7 @@ export default function HomeScreen() {
             <Search size={24} color={Colors.primary} />
           </View>
           <Text style={styles.actionTitle}>Explore Clubs</Text>
-          <Text style={styles.actionSubtitle}>Browse all {allClubs.length} clubs</Text>
+          <Text style={styles.actionSubtitle}>Browse all {clubs.length} clubs</Text>
         </Pressable>
         
         <Pressable style={styles.actionCard} onPress={handleFavoritesPress}>
@@ -104,7 +103,7 @@ export default function HomeScreen() {
         </View>
         <View style={styles.statCard}>
           <Sparkles size={20} color={Colors.secondary} />
-          <Text style={styles.statNumber}>{allClubs.length}</Text>
+          <Text style={styles.statNumber}>{clubs.length}</Text>
           <Text style={styles.statLabel}>Active Clubs</Text>
         </View>
         <View style={styles.statCard}>
@@ -198,16 +197,6 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     maxWidth: 300,
     marginBottom: 8,
-  },
-  debugText: {
-    fontSize: 16,
-    color: Colors.error,
-    fontWeight: '700',
-    textAlign: 'center',
-    marginBottom: 8,
-    backgroundColor: Colors.warning,
-    padding: 8,
-    borderRadius: 4,
   },
   userInfo: {
     fontSize: 14,

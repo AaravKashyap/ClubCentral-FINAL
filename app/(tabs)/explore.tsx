@@ -9,7 +9,7 @@ import ClubCard from "@/components/ClubCard";
 import CategoryPills from "@/components/CategoryPills";
 import SearchBar from "@/components/SearchBar";
 import EmptyState from "@/components/EmptyState";
-import { clubs as mockClubs } from "@/mocks/clubs";
+import { trpc } from "@/lib/trpc";
 
 export default function ExploreScreen() {
   const params = useLocalSearchParams<{ query?: string }>();
@@ -17,10 +17,11 @@ export default function ExploreScreen() {
   const [selectedCategory, setSelectedCategory] = useState<ClubCategory | null>(null);
   const [filteredClubs, setFilteredClubs] = useState<Club[]>([]);
   
-  const clubs = useMemo(() => {
-    console.log('Explore screen - clubs loaded:', mockClubs.length);
-    return mockClubs;
-  }, []);
+  const clubsQuery = trpc.clubs.getAll.useQuery(undefined, {
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+  const clubs = useMemo(() => clubsQuery.data || [], [clubsQuery.data]);
   
   useEffect(() => {
     // Filter clubs based on search query and selected category
@@ -64,7 +65,24 @@ export default function ExploreScreen() {
   );
   
   const renderEmptyState = () => {
-
+    if (clubsQuery.isLoading) {
+      return (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={Colors.primary} />
+          <Text style={styles.loadingText}>Loading clubs...</Text>
+        </View>
+      );
+    }
+    
+    if (clubsQuery.error) {
+      return (
+        <EmptyState
+          title="Failed to load clubs"
+          message="Please check your connection and try again."
+          icon={<Search size={40} color={Colors.textSecondary} />}
+        />
+      );
+    }
     
     const isFiltered = searchQuery || selectedCategory;
     return (
