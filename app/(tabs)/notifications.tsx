@@ -11,17 +11,26 @@ import {
 import { Stack } from 'expo-router';
 import { Check, Clock, User, Mail } from 'lucide-react-native';
 import Colors from '@/constants/colors';
-import { trpc } from '@/lib/trpc';
-import { AdminNotification } from '@/types/club';
+import { useAuth } from '@/store/auth';
 
 export default function NotificationsScreen() {
-  const notificationsQuery = trpc.notifications.getAll.useQuery(undefined, {
-    retry: false,
-    refetchOnWindowFocus: false,
-  });
-  const approveAdminMutation = trpc.notifications.approveAdmin.useMutation();
+  const { user } = useAuth();
+  
+  // Mock notifications - in real app this would come from server
+  const mockNotifications = user?.role === 'super_admin' ? [
+    {
+      id: '1',
+      userName: 'John Doe',
+      userEmail: 'john.doe@example.com',
+      clubName: 'Robotics Club',
+      userId: 'user1',
+      createdAt: new Date().toISOString()
+    }
+  ] : [];
+  
+  const [isApproving, setIsApproving] = React.useState(false);
 
-  const handleApproveAdmin = async (notification: AdminNotification) => {
+  const handleApproveAdmin = async (notification: any) => {
     Alert.alert(
       'Approve Admin',
       `Are you sure you want to approve ${notification.userName} as an admin for ${notification.clubName}?`,
@@ -31,17 +40,12 @@ export default function NotificationsScreen() {
           text: 'Approve',
           style: 'default',
           onPress: async () => {
-            try {
-              await approveAdminMutation.mutateAsync({
-                userId: notification.userId,
-                notificationId: notification.id,
-              });
+            setIsApproving(true);
+            // Simulate API call
+            setTimeout(() => {
+              setIsApproving(false);
               Alert.alert('Success', 'Admin approved successfully!');
-              notificationsQuery.refetch();
-            } catch (error) {
-              Alert.alert('Error', 'Failed to approve admin. Please try again.');
-              console.error('Error approving admin:', error);
-            }
+            }, 1000);
           },
         },
       ]
@@ -63,7 +67,7 @@ export default function NotificationsScreen() {
     }
   };
 
-  const renderNotification = (notification: AdminNotification) => (
+  const renderNotification = (notification: any) => (
     <View key={notification.id} style={styles.notificationCard}>
       <View style={styles.notificationHeader}>
         <View style={styles.iconContainer}>
@@ -98,57 +102,25 @@ export default function NotificationsScreen() {
         <TouchableOpacity
           style={styles.approveButton}
           onPress={() => handleApproveAdmin(notification)}
-          disabled={approveAdminMutation.isPending}
+          disabled={isApproving}
         >
           <Check size={16} color={Colors.white} />
           <Text style={styles.approveButtonText}>
-            {approveAdminMutation.isPending ? 'Approving...' : 'Approve'}
+            {isApproving ? 'Approving...' : 'Approve'}
           </Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 
-  if (notificationsQuery.isLoading) {
-    return (
-      <View style={styles.container}>
-        <View style={styles.loadingContainer}>
-          <Text style={styles.loadingText}>Loading notifications...</Text>
-        </View>
-      </View>
-    );
-  }
-
-  if (notificationsQuery.error) {
-    return (
-      <View style={styles.container}>
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>Failed to load notifications</Text>
-          <TouchableOpacity
-            style={styles.retryButton}
-            onPress={() => notificationsQuery.refetch()}
-          >
-            <Text style={styles.retryButtonText}>Retry</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
-  }
-
-  const notifications = notificationsQuery.data || [];
+  const notifications = mockNotifications;
 
   return (
     <View style={styles.container}>
       <Stack.Screen options={{ title: 'Notifications' }} />
       <ScrollView
         style={styles.scrollView}
-        refreshControl={
-          <RefreshControl
-            refreshing={notificationsQuery.isRefetching}
-            onRefresh={() => notificationsQuery.refetch()}
-            tintColor={Colors.primary}
-          />
-        }
+
       >
         <View style={styles.header}>
           <Text style={styles.subtitle}>

@@ -38,7 +38,7 @@ const generateMeetings = (
         startTime,
         endTime,
         location,
-        description: i === 0 ? "Important meeting! New member welcome." : undefined
+        description: i === 0 ? "Regular club meeting" : undefined
       });
     }
   }
@@ -46,263 +46,372 @@ const generateMeetings = (
   return meetings;
 };
 
-export const clubs: Club[] = [
+// Real club data from the provided information
+const realClubData = [
   {
-    id: "1",
-    name: "Robotics Club",
-    description: "We design, build, and program robots for competitions and exhibitions. Join us to learn engineering, programming, and teamwork skills!",
+    name: "3D Printing and Animation Club",
+    presidentName: "Pranav Vinod",
+    presidentEmail: "vinod2553@mydusd.org",
+    advisorName: "Chris Meyer",
+    meetingDays: "1st and 3rd Thursday",
+    meetingTime: "Lunch",
+    meetingRoom: "N-108",
     category: "STEM" as ClubCategory,
-    tags: ["Engineering", "Programming", "Competitions"],
-    advisorName: "Dr. Sarah Chen",
-    presidentName: "Alex Johnson",
-    email: "robotics@school.edu",
-    meetingFrequency: "Weekly" as MeetingFrequency,
-    meetingDay: "Tuesday",
-    meetingLocation: "Room 203 (Engineering Lab)",
-    imageUrl: "https://images.unsplash.com/photo-1561144257-e32e8efc6c4f",
-    memberCount: 28,
-    yearFounded: 2015,
-    upcomingMeetings: generateMeetings(3, "Tuesday", "15:30", "17:00", "Room 203 (Engineering Lab)"),
-    requirements: "No prior experience needed, just enthusiasm for robotics!",
-    socialMedia: {
-      instagram: "@schoolrobotics",
-      website: "schoolrobotics.org"
-    }
+    description: "Learn 3D printing and animation techniques through hands-on projects and workshops."
   },
   {
-    id: "2",
-    name: "Debate Team",
-    description: "Sharpen your critical thinking and public speaking skills through competitive debate. We participate in regional and state tournaments.",
-    category: "Academic" as ClubCategory,
-    tags: ["Public Speaking", "Critical Thinking", "Competitions"],
-    advisorName: "Mr. James Wilson",
-    presidentName: "Sophia Garcia",
-    email: "debate@school.edu",
-    meetingFrequency: "Bi-weekly" as MeetingFrequency,
-    meetingDay: "Wednesday",
-    meetingLocation: "Room 105",
-    imageUrl: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655",
-    memberCount: 15,
-    yearFounded: 2010,
-    upcomingMeetings: generateMeetings(2, "Wednesday", "16:00", "17:30", "Room 105"),
-    requirements: "Commitment to attend competitions and practice sessions",
-    socialMedia: {
-      instagram: "@schooldebate"
-    }
-  },
-  {
-    id: "3",
-    name: "Art Club",
-    description: "Express yourself through various art forms including painting, drawing, and sculpture. We host exhibitions and collaborate on school murals.",
-    category: "Arts" as ClubCategory,
-    tags: ["Painting", "Drawing", "Creativity"],
-    advisorName: "Ms. Emily Rodriguez",
-    presidentName: "Noah Kim",
-    email: "artclub@school.edu",
-    meetingFrequency: "Weekly" as MeetingFrequency,
-    meetingDay: "Thursday",
-    meetingLocation: "Art Room 101",
-    imageUrl: "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b",
-    memberCount: 22,
-    yearFounded: 2008,
-    upcomingMeetings: generateMeetings(3, "Thursday", "15:00", "16:30", "Art Room 101"),
-    requirements: "Bring your own supplies (basic materials provided)",
-    socialMedia: {
-      instagram: "@schoolartclub"
-    }
-  },
-  {
-    id: "4",
-    name: "Environmental Club",
-    description: "Dedicated to promoting sustainability and environmental awareness on campus and in our community through projects and education.",
+    name: "Acts of Random Kindness Club",
+    presidentName: "Khang Fung",
+    presidentEmail: "fung9424@mydusd.org",
+    advisorName: "Jason Morganstein",
+    meetingDays: "2nd and 4th Tuesday",
+    meetingTime: "Lunch",
+    meetingRoom: "F-201",
     category: "Community Service" as ClubCategory,
-    tags: ["Environment", "Sustainability", "Community"],
-    advisorName: "Ms. Lisa Park",
-    presidentName: "Ethan Brown",
-    email: "eco@school.edu",
-    meetingFrequency: "Bi-weekly" as MeetingFrequency,
-    meetingDay: "Monday",
-    meetingLocation: "Room 156",
-    imageUrl: "https://images.unsplash.com/photo-1472145246862-b24cf25c4a36",
-    memberCount: 18,
-    yearFounded: 2017,
-    upcomingMeetings: generateMeetings(2, "Monday", "15:30", "16:30", "Room 156"),
-    socialMedia: {
-      instagram: "@schooleco",
-      website: "schooleco.org"
-    }
+    description: "Spread kindness and positivity through random acts of service in our community."
   },
   {
-    id: "5",
-    name: "Chess Club",
-    description: "Learn and play chess with peers of all skill levels. We host tournaments and provide coaching for beginners to advanced players.",
-    category: "Academic" as ClubCategory,
-    tags: ["Strategy", "Competitions", "Logic"],
-    advisorName: "Mr. Robert Lee",
-    presidentName: "Emma Davis",
-    email: "chess@school.edu",
-    meetingFrequency: "Weekly" as MeetingFrequency,
-    meetingDay: "Friday",
-    meetingLocation: "Library",
-    imageUrl: "https://images.unsplash.com/photo-1529699211952-734e80c4d42b",
-    memberCount: 12,
-    yearFounded: 2011,
-    upcomingMeetings: generateMeetings(3, "Friday", "15:00", "16:30", "Library"),
-    requirements: "All skill levels welcome"
+    name: "Aerospace Club",
+    presidentName: "Sohail Kazi",
+    presidentEmail: "kazi1290@mydusd.org",
+    advisorName: "Jeanne Morgan",
+    meetingDays: "1st and 3rd Thursday",
+    meetingTime: "Lunch",
+    meetingRoom: "F-305",
+    category: "STEM" as ClubCategory,
+    description: "Explore aerospace engineering, rocketry, and space exploration through projects and competitions."
   },
   {
-    id: "6",
-    name: "Cultural Awareness Society",
-    description: "Celebrating diversity and promoting cultural understanding through events, discussions, and community outreach.",
+    name: "Afghan Student Association",
+    presidentName: "Sahara Salemi",
+    presidentEmail: "salemi3165@mydusd.org",
+    advisorName: "Mike Ruegg",
+    meetingDays: "1st and 3rd Monday",
+    meetingTime: "Lunch",
+    meetingRoom: "L-211",
     category: "Cultural" as ClubCategory,
-    tags: ["Diversity", "Culture", "Events"],
-    advisorName: "Dr. Maria Gonzalez",
-    presidentName: "Aiden Patel",
-    email: "cultural@school.edu",
-    meetingFrequency: "Monthly" as MeetingFrequency,
-    meetingDay: "Wednesday",
-    meetingLocation: "Room 210",
-    imageUrl: "https://images.unsplash.com/photo-1526976668912-1a811878dd37",
-    memberCount: 25,
-    yearFounded: 2016,
-    upcomingMeetings: generateMeetings(1, "Wednesday", "16:00", "17:00", "Room 210"),
-    socialMedia: {
-      instagram: "@schoolculturalsociety"
-    }
+    description: "Celebrate Afghan culture, heritage, and promote cultural understanding among students."
   },
   {
-    id: "7",
-    name: "Coding Club",
-    description: "Learn programming languages, work on coding projects, and participate in hackathons. All experience levels welcome!",
-    category: "STEM" as ClubCategory,
-    tags: ["Programming", "Web Development", "App Development"],
-    advisorName: "Mr. David Chang",
-    presidentName: "Olivia Martinez",
-    email: "coding@school.edu",
-    meetingFrequency: "Weekly" as MeetingFrequency,
-    meetingDay: "Monday",
-    meetingLocation: "Computer Lab 2",
-    imageUrl: "https://images.unsplash.com/photo-1498050108023-c5249f4df085",
-    memberCount: 20,
-    yearFounded: 2018,
-    upcomingMeetings: generateMeetings(3, "Monday", "16:00", "17:30", "Computer Lab 2"),
-    requirements: "Bring your laptop if possible",
-    socialMedia: {
-      website: "schoolcoding.github.io"
-    }
-  },
-  {
-    id: "8",
-    name: "Student Government",
-    description: "Represent student interests, organize school events, and develop leadership skills through service to our school community.",
-    category: "Leadership" as ClubCategory,
-    tags: ["Leadership", "Events", "Community"],
-    advisorName: "Ms. Jennifer Taylor",
-    presidentName: "William Jackson",
-    email: "studentgov@school.edu",
-    meetingFrequency: "Weekly" as MeetingFrequency,
-    meetingDay: "Tuesday",
-    meetingLocation: "Room 120",
-    imageUrl: "https://images.unsplash.com/photo-1577563908411-5077b6dc7624",
-    memberCount: 15,
-    yearFounded: 2005,
-    upcomingMeetings: generateMeetings(3, "Tuesday", "15:30", "17:00", "Room 120"),
-    requirements: "Elected positions require student body vote",
-    socialMedia: {
-      instagram: "@schoolstudentgov",
-      website: "schoolstudentgov.org"
-    }
-  },
-  {
-    id: "9",
-    name: "Photography Club",
-    description: "Explore the art of photography through workshops, photo walks, and exhibitions. Learn techniques and develop your unique style.",
+    name: "Animation Club",
+    presidentName: "Tina Lin",
+    presidentEmail: "lin3225@mydusd.org",
+    advisorName: "Chris Meyer",
+    meetingDays: "1st and 3rd Tuesday",
+    meetingTime: "Lunch",
+    meetingRoom: "N-108",
     category: "Arts" as ClubCategory,
-    tags: ["Photography", "Visual Arts", "Creativity"],
-    advisorName: "Mr. Thomas Wright",
-    presidentName: "Isabella Lopez",
-    email: "photo@school.edu",
-    meetingFrequency: "Bi-weekly" as MeetingFrequency,
-    meetingDay: "Thursday",
-    meetingLocation: "Room 108",
-    imageUrl: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32",
-    memberCount: 16,
-    yearFounded: 2014,
-    upcomingMeetings: generateMeetings(2, "Thursday", "15:30", "17:00", "Room 108"),
-    requirements: "Access to a camera (phone cameras are fine)",
-    socialMedia: {
-      instagram: "@schoolphotography"
-    }
+    description: "Create animated content using various digital tools and techniques."
   },
   {
-    id: "10",
-    name: "Math Team",
-    description: "Tackle challenging math problems and compete in regional and national mathematics competitions.",
+    name: "Archery Club",
+    presidentName: "Eujin Michelle Low",
+    presidentEmail: "low5021@mydusd.org",
+    advisorName: "Neilson Vuong",
+    meetingDays: "Every Wednesday",
+    meetingTime: "Lunch",
+    meetingRoom: "L-204",
+    category: "Sports" as ClubCategory,
+    description: "Learn archery skills, safety, and participate in competitions."
+  },
+  {
+    name: "Art Club",
+    presidentName: "Emaan Qayyum and Ryan Cho",
+    presidentEmail: "qayyum1361@mydusd.org",
+    advisorName: "Noel Sollom",
+    meetingDays: "2nd and 4th Wednesday",
+    meetingTime: "Lunch",
+    meetingRoom: "N-101",
+    category: "Arts" as ClubCategory,
+    description: "Express creativity through various art forms including painting, drawing, and sculpture."
+  },
+  {
+    name: "Asian Student Association",
+    presidentName: "Phoebe Yee & Yena Lee",
+    presidentEmail: "yee2852@mydusd.org",
+    advisorName: "Celine Shi",
+    meetingDays: "2nd and 4th Thursday",
+    meetingTime: "Lunch",
+    meetingRoom: "M-204",
+    category: "Cultural" as ClubCategory,
+    description: "Promote Asian culture, heritage, and foster community among Asian students."
+  },
+  {
+    name: "AstroGaels",
+    presidentName: "Suraj R Kudrikar",
+    presidentEmail: "kudrikar1327@mydusd.org",
+    advisorName: "Jon White",
+    meetingDays: "1st and 3rd Tuesday",
+    meetingTime: "Lunch",
+    meetingRoom: "F-304",
+    category: "STEM" as ClubCategory,
+    description: "Study astronomy, stargazing, and space science through observation and education."
+  },
+  {
+    name: "BC2M",
+    presidentName: "Yashita Vijay",
+    presidentEmail: "vijay3568@mydusd.org",
+    advisorName: "Kelly Gambs",
+    meetingDays: "1st and 3rd Monday",
+    meetingTime: "Lunch",
+    meetingRoom: "J-103",
     category: "Academic" as ClubCategory,
-    tags: ["Mathematics", "Problem Solving", "Competitions"],
-    advisorName: "Dr. Michael Chen",
-    presidentName: "Sophia Williams",
-    email: "mathteam@school.edu",
-    meetingFrequency: "Weekly" as MeetingFrequency,
-    meetingDay: "Wednesday",
-    meetingLocation: "Room 205",
-    imageUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb",
-    memberCount: 14,
-    yearFounded: 2009,
-    upcomingMeetings: generateMeetings(3, "Wednesday", "15:30", "16:30", "Room 205"),
-    requirements: "Completion of Algebra I or equivalent",
-    socialMedia: {
-      website: "schoolmathteam.org"
-    }
+    description: "Support and mentorship program for underrepresented students in STEM fields."
   },
   {
-    id: "11",
-    name: "Drama Club",
-    description: "Perform in school plays and musicals while developing acting, directing, and stagecraft skills.",
-    category: "Arts" as ClubCategory,
-    tags: ["Theater", "Acting", "Performance"],
-    advisorName: "Ms. Rebecca Johnson",
-    presidentName: "Lucas Thompson",
-    email: "drama@school.edu",
-    meetingFrequency: "Weekly" as MeetingFrequency,
-    meetingDay: "Friday",
-    meetingLocation: "Auditorium",
-    imageUrl: "https://images.unsplash.com/photo-1503095396549-807759245b35",
-    memberCount: 30,
-    yearFounded: 2007,
-    upcomingMeetings: generateMeetings(3, "Friday", "16:00", "18:00", "Auditorium"),
-    socialMedia: {
-      instagram: "@schooldrama"
-    }
+    name: "Best Buddies",
+    presidentName: "Lexi Esquivel",
+    presidentEmail: "esquivel9503@mydusd.org",
+    advisorName: "Lu Middleton",
+    meetingDays: "Every Wednesday",
+    meetingTime: "Lunch",
+    meetingRoom: "K-105",
+    category: "Community Service" as ClubCategory,
+    description: "Create friendships and inclusion opportunities for students with intellectual disabilities."
   },
   {
-    id: "12",
-    name: "Science Olympiad",
-    description: "Prepare for and compete in Science Olympiad tournaments covering various scientific disciplines.",
+    name: "California Scholarship Federation (CSF)",
+    presidentName: "CJ Galang",
+    presidentEmail: "galang2959@mydusd.org",
+    advisorName: "Kim Halket",
+    meetingDays: "2nd and 4th Friday",
+    meetingTime: "Lunch",
+    meetingRoom: "Sports Complex",
+    category: "Academic" as ClubCategory,
+    description: "Honor society recognizing academic excellence and community service."
+  },
+  {
+    name: "Cantonese Student Association",
+    presidentName: "Audrey Tang",
+    presidentEmail: "tang2416@mydusd.org",
+    advisorName: "Jaclyn Capie",
+    meetingDays: "1st and 3rd Friday",
+    meetingTime: "Lunch",
+    meetingRoom: "M-102",
+    category: "Cultural" as ClubCategory,
+    description: "Promote Cantonese language, culture, and heritage among students."
+  },
+  {
+    name: "Chemistry Club",
+    presidentName: "Jonathan Song",
+    presidentEmail: "song5227@mydusd.org",
+    advisorName: "Michael Correia",
+    meetingDays: "1st and 3rd Thursday",
+    meetingTime: "Lunch",
+    meetingRoom: "K-203",
     category: "STEM" as ClubCategory,
-    tags: ["Science", "Competitions", "Research"],
-    advisorName: "Dr. Elizabeth Foster",
-    presidentName: "Daniel Kim",
-    email: "scioly@school.edu",
-    meetingFrequency: "Weekly" as MeetingFrequency,
-    meetingDay: "Thursday",
-    meetingLocation: "Science Lab 3",
-    imageUrl: "https://images.unsplash.com/photo-1532094349884-543bc11b234d",
-    memberCount: 22,
-    yearFounded: 2012,
-    upcomingMeetings: generateMeetings(3, "Thursday", "15:30", "17:00", "Science Lab 3"),
-    requirements: "Commitment to competition preparation",
-    socialMedia: {
-      website: "schoolscioly.org"
-    }
+    description: "Explore chemistry through experiments, demonstrations, and competitions."
+  },
+  {
+    name: "CodeHers",
+    presidentName: "Alicia Wang and Danica Truong",
+    presidentEmail: "wang0838@mydusd.org",
+    advisorName: "Mitsuka Bude",
+    meetingDays: "1st and 3rd Friday",
+    meetingTime: "Lunch",
+    meetingRoom: "F-307",
+    category: "STEM" as ClubCategory,
+    description: "Empower girls and non-binary students in coding and technology."
+  },
+  {
+    name: "Data Science Club",
+    presidentName: "Ryan Lee",
+    presidentEmail: "lee2830@mydusd.org",
+    advisorName: "Matthew Janisch",
+    meetingDays: "2nd and 4th Friday",
+    meetingTime: "Lunch",
+    meetingRoom: "L-112",
+    category: "STEM" as ClubCategory,
+    description: "Learn data analysis, machine learning, and statistical methods."
+  },
+  {
+    name: "DHS 4 The Athletes",
+    presidentName: "Tarun Tiwari",
+    presidentEmail: "tiwari5235@mydusd.org",
+    advisorName: "Tom Costello",
+    meetingDays: "2nd and 4th Friday",
+    meetingTime: "Lunch",
+    meetingRoom: "Weight Room",
+    category: "Sports" as ClubCategory,
+    description: "Support and celebrate student athletes and sports achievements."
+  },
+  {
+    name: "DHS Adopt a Family",
+    presidentName: "Aanya Srivastava",
+    presidentEmail: "srivastava2784@mydusd.org",
+    advisorName: "Brian Do",
+    meetingDays: "2nd and 4th Wednesday",
+    meetingTime: "Lunch",
+    meetingRoom: "J-210",
+    category: "Community Service" as ClubCategory,
+    description: "Support local families in need through donations and volunteer work."
+  },
+  {
+    name: "DHS Avani",
+    presidentName: "Rithika Lakshmi",
+    presidentEmail: "lakshmi6820@mydusd.org",
+    advisorName: "Brittany Neideffer",
+    meetingDays: "Every Friday",
+    meetingTime: "Lunch",
+    meetingRoom: "M-210",
+    category: "Cultural" as ClubCategory,
+    description: "Celebrate Indian culture through dance, music, and cultural events."
+  },
+  {
+    name: "DHS Biology Club",
+    presidentName: "Brianna Huang",
+    presidentEmail: "huang3012@mydusd.org",
+    advisorName: "Erica Lee",
+    meetingDays: "2nd and 4th Wednesday",
+    meetingTime: "Lunch",
+    meetingRoom: "J-105",
+    category: "STEM" as ClubCategory,
+    description: "Explore biology through experiments, field trips, and research projects."
+  },
+  {
+    name: "DHS ChangeMakers",
+    presidentName: "Hasini Shivakumar",
+    presidentEmail: "Shivakumar3443@mydusd.org",
+    advisorName: "Silvia Sosa",
+    meetingDays: "1st and 3rd Wednesday",
+    meetingTime: "Lunch",
+    meetingRoom: "L-108",
+    category: "Community Service" as ClubCategory,
+    description: "Create positive change in our community through advocacy and service projects."
+  },
+  {
+    name: "DHS FCSN",
+    presidentName: "Joshua Wu",
+    presidentEmail: "wu2886@mydusd.org",
+    advisorName: "Dan Poulos",
+    meetingDays: "2nd and 4th Monday",
+    meetingTime: "Lunch",
+    meetingRoom: "L-102",
+    category: "Community Service" as ClubCategory,
+    description: "Food, Clothing, and Shelter Network - support local community needs."
+  },
+  {
+    name: "DHS Game Development Club",
+    presidentName: "Pranav Peethani",
+    presidentEmail: "peethani2813@mydusd.org",
+    advisorName: "Chris Meyer",
+    meetingDays: "1st and 3rd Thursday",
+    meetingTime: "Lunch",
+    meetingRoom: "N-108",
+    category: "STEM" as ClubCategory,
+    description: "Design and develop video games using various programming tools and engines."
+  },
+  {
+    name: "DHS Lego Club",
+    presidentName: "Jack Zhou",
+    presidentEmail: "zhou7162@mydusd.org",
+    advisorName: "Brian Do",
+    meetingDays: "Every Friday",
+    meetingTime: "Lunch",
+    meetingRoom: "J-210",
+    category: "Hobbies" as ClubCategory,
+    description: "Build creative structures and compete in LEGO robotics challenges."
+  },
+  {
+    name: "DHS Math Club",
+    presidentName: "Sophia Henningsen",
+    presidentEmail: "henningsen3629@mydusd.org",
+    advisorName: "Elena Tigner",
+    meetingDays: "2nd and 4th Wednesday",
+    meetingTime: "Lunch",
+    meetingRoom: "J-208",
+    category: "Academic" as ClubCategory,
+    description: "Solve challenging math problems and prepare for math competitions."
+  },
+  {
+    name: "DHS Photography Club",
+    presidentName: "Lucas Farmer",
+    presidentEmail: "farmer4501@mydusd.org",
+    advisorName: "Arzoo Nasarabadi",
+    meetingDays: "1st and 3rd Tuesday",
+    meetingTime: "Lunch",
+    meetingRoom: "K-204",
+    category: "Arts" as ClubCategory,
+    description: "Learn photography techniques and create visual stories through images."
+  },
+  {
+    name: "DHS Poetry",
+    presidentName: "Prisha Viswanadha",
+    presidentEmail: "viswanadha4696@mydusd.org",
+    advisorName: "Brandon Youngsma",
+    meetingDays: "1st and 3rd Thursday",
+    meetingTime: "Lunch",
+    meetingRoom: "M-203",
+    category: "Arts" as ClubCategory,
+    description: "Express thoughts and emotions through poetry writing and performance."
   }
 ];
+
+export const clubs: Club[] = realClubData.map((data, index) => {
+  // Determine meeting frequency based on meeting days
+  let meetingFrequency: MeetingFrequency = "Weekly";
+  let meetingCount = 3;
+  
+  if (data.meetingDays.includes("1st and 3rd") || data.meetingDays.includes("2nd and 4th")) {
+    meetingFrequency = "Bi-weekly";
+    meetingCount = 2;
+  } else if (data.meetingDays.includes("Every")) {
+    meetingFrequency = "Weekly";
+    meetingCount = 3;
+  }
+  
+  // Extract day from meeting days
+  const dayMap: { [key: string]: string } = {
+    "Monday": "Monday",
+    "Tuesday": "Tuesday", 
+    "Wednesday": "Wednesday",
+    "Thursday": "Thursday",
+    "Friday": "Friday"
+  };
+  
+  let meetingDay = "";
+  for (const [key, value] of Object.entries(dayMap)) {
+    if (data.meetingDays.includes(key)) {
+      meetingDay = value;
+      break;
+    }
+  }
+  
+  // Generate meeting times (assuming lunch is 12:00-13:00)
+  const startTime = "12:00";
+  const endTime = "13:00";
+  
+  return {
+    id: (index + 1).toString(),
+    name: data.name,
+    description: data.description,
+    category: data.category,
+    tags: [data.name.replace(/DHS\s+/g, "").split(" ")[0], data.category],
+    advisorName: data.advisorName,
+    presidentName: data.presidentName,
+    presidentEmail: data.presidentEmail,
+    email: `${data.name.toLowerCase().replace(/\s+/g, "").replace(/[^a-z0-9]/g, "")}@school.edu`,
+    meetingFrequency,
+    meetingDay,
+    meetingLocation: data.meetingRoom,
+    imageUrl: `https://images.unsplash.com/photo-${1500000000000 + index}?w=400&h=300&fit=crop`,
+    memberCount: Math.floor(Math.random() * 30) + 10,
+    yearFounded: 2015 + (index % 9),
+    upcomingMeetings: generateMeetings(meetingCount, meetingDay, startTime, endTime, data.meetingRoom),
+    requirements: "Open to all interested students",
+    socialMedia: {
+      instagram: `@${data.name.toLowerCase().replace(/\s+/g, "").replace(/dhs/g, "").replace(/[^a-z0-9]/g, "")}`
+    }
+  };
+});
 
 export const categories: ClubCategory[] = [
   "Academic",
   "Arts",
+  "Business",
   "Community Service",
   "Cultural",
+  "Hobbies",
   "STEM",
   "Sports",
   "Leadership",

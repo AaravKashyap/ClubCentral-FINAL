@@ -7,7 +7,7 @@ import Colors from "@/constants/colors";
 import { useFavoritesStore } from "@/store/favorites";
 import ClubCard from "@/components/ClubCard";
 import EmptyState from "@/components/EmptyState";
-import { trpc } from "@/lib/trpc";
+import { clubs } from "@/mocks/clubs";
 import { useAuth } from "@/store/auth";
 import { Club } from "@/types/club";
 
@@ -16,22 +16,15 @@ export default function FavoritesScreen() {
   const { favoriteClubIds } = useFavoritesStore();
   const { user } = useAuth();
   
-  const clubsQuery = trpc.clubs.getAll.useQuery();
-  const clubs = clubsQuery.data || [];
-  
-  const userMembershipsQuery = trpc.clubs.getUserMemberships.useQuery(
-    undefined,
-    { enabled: user?.role === 'student' }
-  );
-  
   const favoriteClubs = useMemo(() => {
     return clubs.filter(club => favoriteClubIds.includes(club.id));
   }, [clubs, favoriteClubIds]);
   
   const joinedClubs = useMemo(() => {
-    if (!userMembershipsQuery.data) return [];
-    return clubs.filter(club => userMembershipsQuery.data.includes(club.id));
-  }, [clubs, userMembershipsQuery.data]);
+    // Mock joined clubs for demo - in real app this would come from user data
+    const mockJoinedClubIds = user?.role === 'student' ? ['1', '3', '7'] : [];
+    return clubs.filter(club => mockJoinedClubIds.includes(club.id));
+  }, [clubs, user?.role]);
   
   const handleExplorePress = () => {
     router.push("/explore");
@@ -95,13 +88,7 @@ export default function FavoritesScreen() {
     <ClubCard club={item} />
   );
   
-  if (clubsQuery.isLoading) {
-    return (
-      <View style={[styles.container, styles.loadingContainer]}>
-        <Text style={styles.loadingText}>Loading...</Text>
-      </View>
-    );
-  }
+
   
   return (
     <View style={styles.container}>

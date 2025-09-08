@@ -11,20 +11,39 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
   const [totalUsers, setTotalUsers] = useState(0);
 
   const initializeApp = useCallback(async () => {
-    await createDefaultUsers();
-    await loadUser();
-    await loadTotalUsers();
+    try {
+      console.log('Initializing app...');
+      await createDefaultUsers();
+      await loadUser();
+      await loadTotalUsers();
+      console.log('App initialization complete');
+    } catch (error) {
+      console.error('App initialization error:', error);
+      setIsLoading(false);
+    }
   }, []);
 
   // Load user from storage on app start
   useEffect(() => {
     initializeApp();
-  }, [initializeApp]);
+    
+    // Fallback timeout to prevent infinite loading
+    const timeout = setTimeout(() => {
+      if (isLoading) {
+        console.warn('App initialization timeout, setting loading to false');
+        setIsLoading(false);
+      }
+    }, 10000); // 10 second timeout
+    
+    return () => clearTimeout(timeout);
+  }, [initializeApp, isLoading]);
 
   const createDefaultUsers = async () => {
     try {
+      console.log('Checking for existing users...');
       const usersData = await AsyncStorage.getItem('all_users');
       if (!usersData) {
+        console.log('Creating default users...');
         // Create default super admin users
         const defaultUsers: User[] = [
           {
@@ -66,22 +85,31 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
         ];
         
         await AsyncStorage.setItem('all_users', JSON.stringify(defaultUsers));
-        console.log('Default users created');
+        console.log('Default users created successfully');
+      } else {
+        console.log('Users already exist in storage');
       }
     } catch (error) {
       console.error('Error creating default users:', error);
+      throw error;
     }
   };
 
   const loadUser = async () => {
     try {
+      console.log('Loading user from storage...');
       const userData = await AsyncStorage.getItem(STORAGE_KEY);
       if (userData) {
-        setUser(JSON.parse(userData));
+        const parsedUser = JSON.parse(userData);
+        console.log('User loaded:', parsedUser.email);
+        setUser(parsedUser);
+      } else {
+        console.log('No user found in storage');
       }
     } catch (error) {
       console.error('Error loading user:', error);
     } finally {
+      console.log('Setting loading to false');
       setIsLoading(false);
     }
   };
