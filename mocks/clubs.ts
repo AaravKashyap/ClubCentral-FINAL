@@ -5,45 +5,55 @@ const generateMeetings = (
   day: string, 
   startTime: string, 
   endTime: string, 
-  location: string
+  location: string,
+  frequency: MeetingFrequency
 ): any[] => {
   const meetings = [];
   const today = new Date();
   
-  for (let i = 0; i < count; i++) {
-    // Find the next occurrence of the specified day
-    let meetingDate = new Date(today);
+  // Generate meetings for the next 6 months
+  const monthsToGenerate = 6;
+  
+  for (let monthOffset = 0; monthOffset < monthsToGenerate; monthOffset++) {
+    const currentMonth = new Date(today.getFullYear(), today.getMonth() + monthOffset, 1);
     const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const targetDayIndex = daysOfWeek.indexOf(day);
     
     if (targetDayIndex !== -1) {
-      const currentDayIndex = today.getDay();
-      let daysToAdd = (targetDayIndex - currentDayIndex + 7) % 7;
+      // Find all occurrences of the day in the month
+      const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate();
       
-      // If today is the target day but it's past the meeting time, move to next week
-      if (daysToAdd === 0) {
-        const currentHour = today.getHours();
-        const meetingHour = parseInt(startTime.split(":")[0]);
-        
-        if (currentHour >= meetingHour) {
-          daysToAdd = 7;
+      for (let dayOfMonth = 1; dayOfMonth <= daysInMonth; dayOfMonth++) {
+        const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), dayOfMonth);
+        if (date.getDay() === targetDayIndex) {
+          // For bi-weekly, only include 1st and 3rd, 2nd and 4th, etc.
+          if (frequency === 'Bi-weekly') {
+            const weekOfMonth = Math.ceil(dayOfMonth / 7);
+            if (weekOfMonth % 2 === 0) continue; // Skip even weeks for 1st/3rd, odd for 2nd/4th
+          }
+          
+          // Only add future meetings
+          if (date >= today) {
+            meetings.push({
+              date: date.toISOString().split("T")[0],
+              startTime,
+              endTime,
+              location,
+              description: monthOffset === 0 ? "Regular club meeting" : undefined,
+              id: `${date.toISOString().split("T")[0]}-${startTime}`,
+              cancelled: false
+            });
+            
+            if (meetings.length >= count) break;
+          }
         }
       }
-      
-      // Add days to current date
-      meetingDate.setDate(today.getDate() + daysToAdd + (i * 7));
-      
-      meetings.push({
-        date: meetingDate.toISOString().split("T")[0],
-        startTime,
-        endTime,
-        location,
-        description: i === 0 ? "Regular club meeting" : undefined
-      });
     }
+    
+    if (meetings.length >= count) break;
   }
   
-  return meetings;
+  return meetings.slice(0, count);
 };
 
 // Function to determine category based on club name
@@ -132,14 +142,14 @@ const determineCategory = (name: string): ClubCategory => {
 const parseMeetingInfo = (meetingDays: string) => {
   let meetingFrequency: MeetingFrequency = 'Weekly';
   let meetingDay = '';
-  let meetingCount = 3;
+  let meetingCount = 24; // Generate for 6 months
   
   if (meetingDays.includes('1st and 3rd') || meetingDays.includes('2nd and 4th')) {
     meetingFrequency = 'Bi-weekly';
-    meetingCount = 2;
+    meetingCount = 12; // 6 months * 2 per month
   } else if (meetingDays.includes('Every')) {
     meetingFrequency = 'Weekly';
-    meetingCount = 3;
+    meetingCount = 24; // 6 months * 4 per month
   }
   
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -1092,7 +1102,7 @@ export const clubs: Club[] = realClubData.map((data, index) => {
     imageUrl: null, // Removed fake images
     memberCount: 0, // Not provided, set to 0
     yearFounded: 0, // Not provided, set to 0
-    upcomingMeetings: generateMeetings(meetingCount, meetingDay, startTime, endTime, data.meetingRoom),
+    upcomingMeetings: generateMeetings(meetingCount, meetingDay, startTime, endTime, data.meetingRoom, meetingFrequency),
     requirements: "Open to all interested students",
     socialMedia: {}
   };
@@ -1120,7 +1130,9 @@ export const getUpcomingMeetings = (limit: number = 5): { club: Club, meeting: a
   
   clubs.forEach(club => {
     club.upcomingMeetings.forEach(meeting => {
-      allMeetings.push({ club, meeting });
+      if (!meeting.cancelled) {
+        allMeetings.push({ club, meeting });
+      }
     });
   });
   

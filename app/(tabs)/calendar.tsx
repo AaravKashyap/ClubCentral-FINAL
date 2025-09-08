@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, SectionList } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Colors from "@/constants/colors";
 import MeetingItem from "@/components/MeetingItem";
 import EmptyState from "@/components/EmptyState";
@@ -7,13 +8,14 @@ import { Calendar } from "lucide-react-native";
 import { getUpcomingMeetings } from "@/mocks/clubs";
 
 export default function CalendarScreen() {
+  const insets = useSafeAreaInsets();
   const [meetings, setMeetings] = useState<any[]>([]);
   const [sections, setSections] = useState<any[]>([]);
   
 
   
   useEffect(() => {
-    const upcomingMeetings = getUpcomingMeetings();
+    const upcomingMeetings = getUpcomingMeetings(50); // Get more meetings for calendar view
     setMeetings(upcomingMeetings);
     
     // Group meetings by date
@@ -26,7 +28,7 @@ export default function CalendarScreen() {
       return acc;
     }, {});
     
-    const sectionsData = Object.keys(groupedMeetings).map(date => ({
+    const sectionsData = Object.keys(groupedMeetings).sort().map(date => ({
       title: new Date(date).toLocaleDateString('en-US', { 
         weekday: 'long', 
         year: 'numeric', 
@@ -63,7 +65,7 @@ export default function CalendarScreen() {
   );
   
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       <SectionList
         sections={sections}
         keyExtractor={(item, index) => `${item.club.id}-${index}`}

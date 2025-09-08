@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { StyleSheet, Text, View, ScrollView, Pressable, Linking, Alert, TextInput } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { Image } from "expo-image";
-import { Heart, Mail, Instagram, Globe, Users, Calendar, MapPin, Clock, Info, ImageIcon, Camera, Save, X } from "lucide-react-native";
+import { Heart, Mail, Instagram, Globe, Users, Calendar, MapPin, Clock, Info, ImageIcon, Camera, Save, X, Trash2 } from "lucide-react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import Colors from "@/constants/colors";
 import { useFavoritesStore } from "@/store/favorites";
@@ -14,6 +15,7 @@ export default function ClubDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { isFavorite, toggleFavorite } = useFavoritesStore();
   const { user } = useAuth();
+  const insets = useSafeAreaInsets();
   const [isJoining, setIsJoining] = useState(false);
   const [isEditingImage, setIsEditingImage] = useState(false);
   const [newImageUrl, setNewImageUrl] = useState('');
@@ -49,7 +51,7 @@ export default function ClubDetailScreen() {
   };
   
   const handleEmailPress = () => {
-    Linking.openURL(`mailto:${club.email}`);
+    Linking.openURL(`mailto:${club.presidentEmail}`);
   };
   
   const handleInstagramPress = () => {
@@ -125,11 +127,37 @@ export default function ClubDetailScreen() {
   };
   
   const canEditClub = user?.role === 'admin' || user?.role === 'super_admin';
+  const isClubAdmin = canEditClub && user?.email === club.presidentEmail;
+  
+  const handleCancelMeeting = (meetingId: string) => {
+    if (!isClubAdmin) return;
+    
+    Alert.alert(
+      'Cancel Meeting',
+      'Are you sure you want to cancel this meeting?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Confirm',
+          style: 'destructive',
+          onPress: () => {
+            // In real app, this would update the meeting in the database
+            const meeting = club.upcomingMeetings.find(m => m.id === meetingId);
+            if (meeting) {
+              meeting.cancelled = true;
+              Alert.alert('Success', 'Meeting cancelled successfully');
+            }
+          }
+        }
+      ]
+    );
+  };
   
 
   
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
       <View style={styles.imageContainer}>
         {club.imageUrl ? (
           <Image 
@@ -177,14 +205,14 @@ export default function ClubDetailScreen() {
           />
           <View style={styles.editImageActions}>
             <Pressable 
-              style={[styles.editImageButton, styles.cancelButton]}
+              style={[styles.editImageButton, styles.editCancelButton]}
               onPress={() => {
                 setIsEditingImage(false);
                 setNewImageUrl('');
               }}
             >
               <X size={16} color={Colors.textSecondary} />
-              <Text style={styles.cancelButtonText}>Cancel</Text>
+              <Text style={styles.editCancelButtonText}>Cancel</Text>
             </Pressable>
             <Pressable 
               style={[styles.editImageButton, styles.saveButton]}
@@ -296,13 +324,23 @@ export default function ClubDetailScreen() {
       
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Upcoming Meetings</Text>
-        {club.upcomingMeetings.length > 0 ? (
-          club.upcomingMeetings.map((meeting, index) => (
-            <MeetingItem 
-              key={index}
-              club={club}
-              meeting={meeting}
-            />
+        {club.upcomingMeetings.filter(m => !m.cancelled).length > 0 ? (
+          club.upcomingMeetings.filter(m => !m.cancelled).map((meeting, index) => (
+            <View key={meeting.id || index} style={styles.meetingContainer}>
+              <MeetingItem 
+                club={club}
+                meeting={meeting}
+              />
+              {isClubAdmin && (
+                <Pressable 
+                  style={styles.cancelButton}
+                  onPress={() => handleCancelMeeting(meeting.id)}
+                >
+                  <Trash2 size={16} color={Colors.error} />
+                  <Text style={styles.cancelButtonText}>Cancel Meeting</Text>
+                </Pressable>
+              )}
+            </View>
           ))
         ) : (
           <Text style={styles.noMeetingsText}>No upcoming meetings scheduled</Text>
@@ -314,7 +352,7 @@ export default function ClubDetailScreen() {
         <View style={styles.contactContainer}>
           <Pressable style={styles.contactButton} onPress={handleEmailPress}>
             <Mail size={20} color={Colors.primary} />
-            <Text style={styles.contactText}>Email</Text>
+            <Text style={styles.contactText}>Email President</Text>
           </Pressable>
           
           {club.socialMedia?.instagram && (
@@ -332,7 +370,8 @@ export default function ClubDetailScreen() {
           )}
         </View>
       </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
 
@@ -340,6 +379,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.background,
+  },
+  scrollView: {
+    flex: 1,
   },
   content: {
     paddingBottom: 32,
@@ -414,7 +456,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     gap: 6,
   },
-  cancelButton: {
+  editCancelButton: {
     backgroundColor: Colors.background,
     borderWidth: 1,
     borderColor: Colors.border || Colors.textSecondary + '40',
@@ -422,7 +464,7 @@ const styles = StyleSheet.create({
   saveButton: {
     backgroundColor: Colors.primary,
   },
-  cancelButtonText: {
+  editCancelButtonText: {
     fontSize: 14,
     fontWeight: '500',
     color: Colors.textSecondary,
@@ -575,6 +617,24 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 22,
     color: Colors.text,
+  },
+  meetingContainer: {
+    marginBottom: 8,
+  },
+  cancelButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.error + '20',
+    padding: 8,
+    borderRadius: 8,
+    marginTop: 4,
+  },
+  cancelButtonText: {
+    color: Colors.error,
+    fontSize: 12,
+    fontWeight: '500',
+    marginLeft: 4,
   },
   contactContainer: {
     flexDirection: "row",

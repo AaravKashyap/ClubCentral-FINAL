@@ -17,11 +17,13 @@ export type MeetingFrequency =
   | "Varies";
 
 export type ClubMeeting = {
+  id: string;
   date: string; // ISO date string
   startTime: string; // Format: "14:30"
   endTime: string; // Format: "16:00"
   location: string;
   description?: string;
+  cancelled?: boolean;
 };
 
 export type Club = {
