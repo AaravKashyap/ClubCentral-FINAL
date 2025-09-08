@@ -45,15 +45,6 @@ const generateMeetings = (
       }
     }
     
-    // Debug: Log first few occurrences for verification
-    if (occurrences.length > 0 && monthOffset === 0) {
-      const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-      console.log(`${meetingPattern} - Target: ${day} (index ${targetDayIndex})`);
-      occurrences.slice(0, 2).forEach((d, i) => {
-        console.log(`  Occurrence ${i + 1}: ${d.toISOString().split('T')[0]} - ${dayNames[d.getDay()]}`);
-      });
-    }
-    
     // Filter based on meeting pattern
     let selectedDates: Date[] = [];
     
@@ -83,13 +74,19 @@ const generateMeetings = (
       meetingDate.setHours(0, 0, 0, 0);
       
       if (meetingDate >= today) {
+        // Format date as YYYY-MM-DD with proper padding
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const dayOfMonth = String(date.getDate()).padStart(2, '0');
+        const dateString = `${year}-${month}-${dayOfMonth}`;
+        
         meetings.push({
-          date: date.toISOString().split("T")[0],
+          date: dateString,
           startTime,
           endTime,
           location,
           description: "Regular club meeting",
-          id: `${date.toISOString().split("T")[0]}-${startTime}`,
+          id: `${dateString}-${startTime}`,
           cancelled: false
         });
         
