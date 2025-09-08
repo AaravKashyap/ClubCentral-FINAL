@@ -17,8 +17,6 @@ export default function HomeScreen() {
   const allClubs = clubs;
   
   useEffect(() => {
-    console.log('Home screen loaded, clubs count:', allClubs.length);
-    console.log('First club:', allClubs[0]);
     // No upcoming meetings for now since we removed fake data
     setUpcomingMeetings([]);
   }, [allClubs]);
@@ -60,9 +58,7 @@ export default function HomeScreen() {
         <Text style={styles.heroSubtitle}>
           Welcome {user?.name}! Discover and connect with all the amazing clubs on campus.
         </Text>
-        <Text style={styles.debugText}>
-          DEBUG: {allClubs.length} clubs loaded
-        </Text>
+
         <Text style={styles.userInfo}>
           Role: {user?.role === 'super_admin' ? 'Super Admin' : user?.role === 'admin' ? 'Club President' : 'Student'}
         </Text>
@@ -199,16 +195,7 @@ const styles = StyleSheet.create({
     maxWidth: 300,
     marginBottom: 8,
   },
-  debugText: {
-    fontSize: 16,
-    color: Colors.error,
-    fontWeight: '700',
-    textAlign: 'center',
-    marginBottom: 8,
-    backgroundColor: Colors.warning,
-    padding: 8,
-    borderRadius: 4,
-  },
+
   userInfo: {
     fontSize: 14,
     color: Colors.primary,
