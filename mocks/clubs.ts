@@ -12,6 +12,7 @@ const generateMeetings = (
 ): any[] => {
   const meetings = [];
   const today = new Date();
+  today.setHours(0, 0, 0, 0); // Reset to start of day for accurate comparison
   
   // Generate meetings for the next 6 months
   const monthsToGenerate = 6;
@@ -40,15 +41,22 @@ const generateMeetings = (
         selectedDates = occurrences;
       } else if (frequency === 'Bi-weekly') {
         if (meetingPattern.includes('1st and 3rd')) {
-          selectedDates = [occurrences[0], occurrences[2]].filter(Boolean);
+          // Select 1st and 3rd occurrence (index 0 and 2)
+          if (occurrences[0]) selectedDates.push(occurrences[0]);
+          if (occurrences[2]) selectedDates.push(occurrences[2]);
         } else if (meetingPattern.includes('2nd and 4th')) {
-          selectedDates = [occurrences[1], occurrences[3]].filter(Boolean);
+          // Select 2nd and 4th occurrence (index 1 and 3)
+          if (occurrences[1]) selectedDates.push(occurrences[1]);
+          if (occurrences[3]) selectedDates.push(occurrences[3]);
         }
       }
       
       // Add meetings that are in the future
       for (const date of selectedDates) {
-        if (date >= today) {
+        const meetingDate = new Date(date);
+        meetingDate.setHours(0, 0, 0, 0);
+        
+        if (meetingDate >= today) {
           meetings.push({
             date: date.toISOString().split("T")[0],
             startTime,
