@@ -7,18 +7,14 @@ import Colors from "@/constants/colors";
 import ClubCard from "@/components/ClubCard";
 import MeetingItem from "@/components/MeetingItem";
 import { useAuth } from "@/store/auth";
-import { trpc } from "@/lib/trpc";
+import { clubs } from "@/mocks/clubs";
 
 export default function HomeScreen() {
   const router = useRouter();
   const { user, totalUsers, logout } = useAuth();
   const [upcomingMeetings, setUpcomingMeetings] = useState<any[]>([]);
   
-  const clubsQuery = trpc.clubs.getAll.useQuery(undefined, {
-    retry: false,
-    refetchOnWindowFocus: false,
-  });
-  const clubs = clubsQuery.data || [];
+  const allClubs = clubs;
   
   useEffect(() => {
     // No upcoming meetings for now since we removed fake data
@@ -26,7 +22,7 @@ export default function HomeScreen() {
   }, []);
   
   // Get featured clubs (first 3 clubs)
-  const featuredClubs = clubs.slice(0, 3);
+  const featuredClubs = allClubs.slice(0, 3);
   
   const handleExplorePress = () => {
     router.push("/explore");
@@ -74,7 +70,7 @@ export default function HomeScreen() {
             <Search size={24} color={Colors.primary} />
           </View>
           <Text style={styles.actionTitle}>Explore Clubs</Text>
-          <Text style={styles.actionSubtitle}>Browse all {clubs.length} clubs</Text>
+          <Text style={styles.actionSubtitle}>Browse all {allClubs.length} clubs</Text>
         </Pressable>
         
         <Pressable style={styles.actionCard} onPress={handleFavoritesPress}>
@@ -103,7 +99,7 @@ export default function HomeScreen() {
         </View>
         <View style={styles.statCard}>
           <Sparkles size={20} color={Colors.secondary} />
-          <Text style={styles.statNumber}>{clubs.length}</Text>
+          <Text style={styles.statNumber}>{allClubs.length}</Text>
           <Text style={styles.statLabel}>Active Clubs</Text>
         </View>
         <View style={styles.statCard}>

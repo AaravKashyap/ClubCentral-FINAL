@@ -4,13 +4,11 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Colors from "@/constants/colors";
 import { AuthProvider } from '@/store/auth';
 import AuthGuard from '@/components/AuthGuard';
-import { trpc, trpcClient } from '@/lib/trpc';
 
-const queryClient = new QueryClient();
+
 
 export const unstable_settings = {
   initialRouteName: "(tabs)",
@@ -42,15 +40,11 @@ export default function RootLayout() {
   }
 
   return (
-    <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <AuthGuard>
-            <RootLayoutNav />
-          </AuthGuard>
-        </AuthProvider>
-      </QueryClientProvider>
-    </trpc.Provider>
+    <AuthProvider>
+      <AuthGuard>
+        <RootLayoutNav />
+      </AuthGuard>
+    </AuthProvider>
   );
 }
 
