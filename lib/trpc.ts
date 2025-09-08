@@ -1,5 +1,5 @@
 import { createTRPCReact } from "@trpc/react-query";
-import { createTRPCClient, httpLink } from "@trpc/client";
+import { httpLink } from "@trpc/client";
 import type { AppRouter } from "@/backend/trpc/app-router";
 import superjson from "superjson";
 
@@ -10,17 +10,12 @@ const getBaseUrl = () => {
     return process.env.EXPO_PUBLIC_RORK_API_BASE_URL;
   }
 
-  // Fallback for development - this will work when running locally
-  if (typeof window !== 'undefined') {
-    // Web environment
-    return window.location.origin;
-  }
-  
-  // For now, return a placeholder that won't break the app
-  return 'http://localhost:8081';
+  throw new Error(
+    "No base url found, please set EXPO_PUBLIC_RORK_API_BASE_URL"
+  );
 };
 
-export const trpcClient = createTRPCClient<AppRouter>({
+export const trpcClient = trpc.createClient({
   links: [
     httpLink({
       url: `${getBaseUrl()}/api/trpc`,
@@ -28,6 +23,3 @@ export const trpcClient = createTRPCClient<AppRouter>({
     }),
   ],
 });
-
-// Export a simple function to get the client for use in components
-export const getTrpcClient = () => trpcClient;

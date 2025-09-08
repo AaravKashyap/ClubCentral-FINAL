@@ -2,13 +2,15 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { View, StyleSheet } from "react-native";
 import Colors from "@/constants/colors";
 import { AuthProvider } from '@/store/auth';
 import AuthGuard from '@/components/AuthGuard';
 import { PWABanner } from '@/components/PWABanner';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { trpc, trpcClient } from '@/lib/trpc';
 
 
 
@@ -23,6 +25,8 @@ export default function RootLayout() {
   const [loaded, error] = useFonts({
     ...FontAwesome.font,
   });
+  
+  const [queryClient] = useState(() => new QueryClient());
 
   useEffect(() => {
     if (error) {
@@ -42,11 +46,15 @@ export default function RootLayout() {
   }
 
   return (
-    <AuthProvider>
-      <AuthGuard>
-        <RootLayoutNav />
-      </AuthGuard>
-    </AuthProvider>
+    <trpc.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <AuthGuard>
+            <RootLayoutNav />
+          </AuthGuard>
+        </AuthProvider>
+      </QueryClientProvider>
+    </trpc.Provider>
   );
 }
 
