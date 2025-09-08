@@ -17,58 +17,73 @@ const generateMeetings = (
   // Generate meetings for the next 6 months
   const monthsToGenerate = 6;
   
+  // If no day is specified, return empty array
+  if (!day) {
+    console.warn(`No meeting day specified for pattern: ${meetingPattern}`);
+    return [];
+  }
+  
   for (let monthOffset = 0; monthOffset < monthsToGenerate; monthOffset++) {
     const currentMonth = new Date(today.getFullYear(), today.getMonth() + monthOffset, 1);
     const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const targetDayIndex = daysOfWeek.indexOf(day);
     
-    if (targetDayIndex !== -1) {
-      // Find all occurrences of the target day in the month
-      const occurrences: Date[] = [];
-      const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate();
-      
-      for (let dayOfMonth = 1; dayOfMonth <= daysInMonth; dayOfMonth++) {
-        const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), dayOfMonth);
-        if (date.getDay() === targetDayIndex) {
-          occurrences.push(date);
-        }
+    if (targetDayIndex === -1) {
+      console.warn(`Invalid day: ${day} for pattern: ${meetingPattern}`);
+      continue;
+    }
+    
+    // Find all occurrences of the target day in the month
+    const occurrences: Date[] = [];
+    const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate();
+    
+    for (let dayOfMonth = 1; dayOfMonth <= daysInMonth; dayOfMonth++) {
+      const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), dayOfMonth);
+      if (date.getDay() === targetDayIndex) {
+        occurrences.push(new Date(date)); // Create a new Date object to avoid reference issues
       }
+    }
+    
+    // Filter based on meeting pattern
+    let selectedDates: Date[] = [];
+    
+    if (meetingPattern.includes('Every')) {
+      // Every week on this day
+      selectedDates = occurrences;
+    } else if (meetingPattern.includes('1st and 3rd')) {
+      // Select 1st and 3rd occurrence (index 0 and 2)
+      if (occurrences[0]) selectedDates.push(occurrences[0]);
+      if (occurrences[2]) selectedDates.push(occurrences[2]);
+    } else if (meetingPattern.includes('2nd and 4th')) {
+      // Select 2nd and 4th occurrence (index 1 and 3)
+      if (occurrences[1]) selectedDates.push(occurrences[1]);
+      if (occurrences[3]) selectedDates.push(occurrences[3]);
+    } else if (frequency === 'Weekly') {
+      // Default to every week if not specified
+      selectedDates = occurrences;
+    } else if (frequency === 'Bi-weekly') {
+      // Default bi-weekly pattern (1st and 3rd)
+      if (occurrences[0]) selectedDates.push(occurrences[0]);
+      if (occurrences[2]) selectedDates.push(occurrences[2]);
+    }
+    
+    // Add meetings that are in the future
+    for (const date of selectedDates) {
+      const meetingDate = new Date(date);
+      meetingDate.setHours(0, 0, 0, 0);
       
-      // Filter based on meeting pattern
-      let selectedDates: Date[] = [];
-      
-      if (frequency === 'Weekly' || meetingPattern.includes('Every')) {
-        selectedDates = occurrences;
-      } else if (frequency === 'Bi-weekly') {
-        if (meetingPattern.includes('1st and 3rd')) {
-          // Select 1st and 3rd occurrence (index 0 and 2)
-          if (occurrences[0]) selectedDates.push(occurrences[0]);
-          if (occurrences[2]) selectedDates.push(occurrences[2]);
-        } else if (meetingPattern.includes('2nd and 4th')) {
-          // Select 2nd and 4th occurrence (index 1 and 3)
-          if (occurrences[1]) selectedDates.push(occurrences[1]);
-          if (occurrences[3]) selectedDates.push(occurrences[3]);
-        }
-      }
-      
-      // Add meetings that are in the future
-      for (const date of selectedDates) {
-        const meetingDate = new Date(date);
-        meetingDate.setHours(0, 0, 0, 0);
+      if (meetingDate >= today) {
+        meetings.push({
+          date: date.toISOString().split("T")[0],
+          startTime,
+          endTime,
+          location,
+          description: "Regular club meeting",
+          id: `${date.toISOString().split("T")[0]}-${startTime}`,
+          cancelled: false
+        });
         
-        if (meetingDate >= today) {
-          meetings.push({
-            date: date.toISOString().split("T")[0],
-            startTime,
-            endTime,
-            location,
-            description: monthOffset === 0 ? "Regular club meeting" : undefined,
-            id: `${date.toISOString().split("T")[0]}-${startTime}`,
-            cancelled: false
-          });
-          
-          if (meetings.length >= count) break;
-        }
+        if (meetings.length >= count) break;
       }
     }
     
@@ -166,6 +181,16 @@ const parseMeetingInfo = (meetingDays: string) => {
   let meetingDay = '';
   let meetingCount = 24; // Generate for 6 months
   
+  // Parse the day of the week FIRST
+  const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  for (const day of days) {
+    if (meetingDays.includes(day)) {
+      meetingDay = day;
+      break;
+    }
+  }
+  
+  // Then determine frequency based on pattern
   // Handle special cases like Trading Card Club with multiple patterns
   if (meetingDays.includes('1st and 3rd') && meetingDays.includes('2nd and 4th')) {
     // This club meets every week (both 1st/3rd and 2nd/4th)
@@ -179,12 +204,9 @@ const parseMeetingInfo = (meetingDays: string) => {
     meetingCount = 24; // 6 months * 4 per month
   }
   
-  const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-  for (const day of days) {
-    if (meetingDays.includes(day)) {
-      meetingDay = day;
-      break;
-    }
+  // Debug logging to verify parsing
+  if (!meetingDay) {
+    console.warn(`Could not parse day from: ${meetingDays}`);
   }
   
   return { meetingFrequency, meetingDay, meetingCount, meetingPattern: meetingDays };
