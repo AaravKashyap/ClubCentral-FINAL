@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, memo } from "react";
 import { StyleSheet, TextInput, View, Pressable } from "react-native";
 import { Search, X } from "lucide-react-native";
 import Colors from "@/constants/colors";
@@ -9,7 +9,7 @@ type SearchBarProps = {
   placeholder?: string;
 };
 
-export default function SearchBar({ 
+const SearchBar = memo(function SearchBar({ 
   value, 
   onChangeText, 
   placeholder = "Search clubs..." 
@@ -36,6 +36,8 @@ export default function SearchBar({
         autoCorrect={false}
         autoCapitalize="none"
         blurOnSubmit={false}
+        autoFocus={false}
+        selectTextOnFocus={false}
       />
       {value.length > 0 && (
         <Pressable onPress={handleClear} style={styles.clearButton}>
@@ -44,7 +46,9 @@ export default function SearchBar({
       )}
     </View>
   );
-}
+});
+
+export default SearchBar;
 
 const styles = StyleSheet.create({
   container: {

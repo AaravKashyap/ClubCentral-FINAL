@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { StyleSheet, Text, View, ScrollView, Pressable } from "react-native";
 import Colors from "@/constants/colors";
 import { ClubCategory } from "@/types/club";
@@ -19,7 +19,7 @@ type CategoryPillsProps = {
   onSelectCategory: (category: ClubCategory | null) => void;
 };
 
-export default function CategoryPills({ selectedCategory, onSelectCategory }: CategoryPillsProps) {
+const CategoryPills = memo(function CategoryPills({ selectedCategory, onSelectCategory }: CategoryPillsProps) {
   return (
     <View style={styles.container}>
       <ScrollView 
@@ -66,7 +66,9 @@ export default function CategoryPills({ selectedCategory, onSelectCategory }: Ca
       </ScrollView>
     </View>
   );
-}
+});
+
+export default CategoryPills;
 
 const styles = StyleSheet.create({
   container: {

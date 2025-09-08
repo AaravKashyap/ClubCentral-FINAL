@@ -42,7 +42,18 @@ export default function ExploreScreen() {
     return filtered;
   }, [searchQuery, selectedCategory, clubs]);
   
-  const renderHeader = useCallback(() => (
+  // Memoize the search handler to prevent re-renders
+  const handleSearchChange = useCallback((text: string) => {
+    setSearchQuery(text);
+  }, []);
+  
+  // Memoize the category handler
+  const handleCategoryChange = useCallback((category: ClubCategory | null) => {
+    setSelectedCategory(category);
+  }, []);
+  
+  // Create a stable header component that won't re-render unnecessarily
+  const ListHeader = useMemo(() => (
     <View style={styles.header}>
       <View style={styles.headerTop}>
         <Text style={styles.title}>Explore Clubs</Text>
@@ -52,15 +63,15 @@ export default function ExploreScreen() {
       </View>
       <SearchBar 
         value={searchQuery}
-        onChangeText={setSearchQuery}
+        onChangeText={handleSearchChange}
         placeholder="Search by name, description, tags, or people..."
       />
       <CategoryPills 
         selectedCategory={selectedCategory}
-        onSelectCategory={setSelectedCategory}
+        onSelectCategory={handleCategoryChange}
       />
     </View>
-  ), [filteredClubs.length, clubs.length, searchQuery, selectedCategory]);
+  ), [filteredClubs.length, clubs.length, searchQuery, selectedCategory, handleSearchChange, handleCategoryChange]);
   
   const renderEmptyState = useCallback(() => {
     const isFiltered = searchQuery || selectedCategory;
@@ -99,7 +110,7 @@ export default function ExploreScreen() {
       removeClippedSubviews={true}
       maxToRenderPerBatch={10}
       windowSize={10}
-      ListHeaderComponent={renderHeader}
+      ListHeaderComponent={ListHeader}
       ListEmptyComponent={renderEmptyState}
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
