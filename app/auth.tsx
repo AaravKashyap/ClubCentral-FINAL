@@ -93,9 +93,10 @@ export default function AuthScreen() {
 
           {!isLogin && (
             <>
+              <Text style={styles.inputLabel}>Full Name</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Full Name"
+                placeholder="Enter your full name"
                 value={name}
                 onChangeText={setName}
                 autoCapitalize="words"
@@ -131,29 +132,34 @@ export default function AuthScreen() {
               </View>
 
               {selectedRole === 'admin' && (
-                <TextInput
-                  style={styles.input}
-                  placeholder="Club Name (will be verified by super admin)"
-                  value={clubName}
-                  onChangeText={setClubName}
-                  autoCapitalize="words"
-                />
+                <>
+                  <Text style={styles.inputLabel}>Club Name</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Enter your club name for verification"
+                    value={clubName}
+                    onChangeText={setClubName}
+                    autoCapitalize="words"
+                  />
+                </>
               )}
             </>
           )}
 
+          <Text style={styles.inputLabel}>Email</Text>
           <TextInput
             style={styles.input}
-            placeholder="Email"
+            placeholder="Enter your email address"
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
             autoCapitalize="none"
           />
 
+          <Text style={styles.inputLabel}>Password</Text>
           <TextInput
             style={styles.input}
-            placeholder="Password"
+            placeholder="Enter your password"
             value={password}
             onChangeText={setPassword}
             secureTextEntry
@@ -231,6 +237,12 @@ const styles = StyleSheet.create({
   },
   activeToggleText: {
     color: 'white',
+  },
+  inputLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: Colors.text,
+    marginBottom: 8,
   },
   input: {
     backgroundColor: Colors.card,
