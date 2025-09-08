@@ -33,7 +33,7 @@ export default function ClubCard({ club, compact = false }: ClubCardProps) {
         style={styles.compactContainer} 
         onPress={handlePress}
       >
-        {club.imageUrl && club.imageUrl.trim() !== '' && club.imageUrl !== 'undefined' ? (
+        {club.imageUrl && club.imageUrl.trim() !== '' && club.imageUrl !== 'undefined' && club.imageUrl !== 'null' ? (
           <Image 
             source={{ uri: club.imageUrl }}
             style={styles.compactImage}
@@ -69,7 +69,7 @@ export default function ClubCard({ club, compact = false }: ClubCardProps) {
       style={styles.container} 
       onPress={handlePress}
     >
-      {club.imageUrl && club.imageUrl.trim() !== '' && club.imageUrl !== 'undefined' ? (
+      {club.imageUrl && club.imageUrl.trim() !== '' && club.imageUrl !== 'undefined' && club.imageUrl !== 'null' ? (
         <Image 
           source={{ uri: club.imageUrl }}
           style={styles.image}

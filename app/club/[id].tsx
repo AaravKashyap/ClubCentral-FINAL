@@ -159,7 +159,7 @@ export default function ClubDetailScreen() {
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
       <View style={styles.imageContainer}>
-        {club.imageUrl ? (
+        {club.imageUrl && club.imageUrl.trim() !== '' && club.imageUrl !== 'undefined' && club.imageUrl !== 'null' ? (
           <Image 
             source={{ uri: club.imageUrl }}
             style={styles.image}
@@ -180,7 +180,7 @@ export default function ClubDetailScreen() {
             >
               <Camera size={20} color="white" />
             </Pressable>
-            {club.imageUrl && (
+            {club.imageUrl && club.imageUrl.trim() !== '' && club.imageUrl !== 'undefined' && club.imageUrl !== 'null' && (
               <Pressable 
                 style={[styles.imageActionButton, styles.removeButton]}
                 onPress={handleRemoveImage}
