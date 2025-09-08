@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { StyleSheet, Text, View, FlatList, ActivityIndicator } from "react-native";
+import React, { useState, useMemo, useCallback } from "react";
+import { StyleSheet, Text, View, FlatList } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { Search } from "lucide-react-native";
 
@@ -15,14 +15,13 @@ export default function ExploreScreen() {
   const params = useLocalSearchParams<{ query?: string }>();
   const [searchQuery, setSearchQuery] = useState(params.query || "");
   const [selectedCategory, setSelectedCategory] = useState<ClubCategory | null>(null);
-  const [filteredClubs, setFilteredClubs] = useState<Club[]>([]);
   
   const clubs = useMemo(() => {
     console.log('Explore screen - clubs loaded:', mockClubs.length);
     return mockClubs;
   }, []);
   
-  useEffect(() => {
+  const filteredClubs = useMemo(() => {
     // Filter clubs based on search query and selected category
     let filtered = clubs;
     
@@ -40,10 +39,10 @@ export default function ExploreScreen() {
       filtered = filtered.filter(club => club.category === selectedCategory);
     }
     
-    setFilteredClubs(filtered);
+    return filtered;
   }, [searchQuery, selectedCategory, clubs]);
   
-  const renderHeader = () => (
+  const renderHeader = useCallback(() => (
     <View style={styles.header}>
       <View style={styles.headerTop}>
         <Text style={styles.title}>Explore Clubs</Text>
@@ -61,11 +60,9 @@ export default function ExploreScreen() {
         onSelectCategory={setSelectedCategory}
       />
     </View>
-  );
+  ), [filteredClubs.length, clubs.length, searchQuery, selectedCategory]);
   
-  const renderEmptyState = () => {
-
-    
+  const renderEmptyState = useCallback(() => {
     const isFiltered = searchQuery || selectedCategory;
     return (
       <EmptyState
@@ -78,7 +75,11 @@ export default function ExploreScreen() {
         icon={<Search size={40} color={Colors.textSecondary} />}
       />
     );
-  };
+  }, [searchQuery, selectedCategory]);
+  
+  const renderClubCard = useCallback(({ item }: { item: Club }) => (
+    <ClubCard club={item} />
+  ), []);
   
   return (
     <FlatList
@@ -89,7 +90,15 @@ export default function ExploreScreen() {
       ]}
       data={filteredClubs}
       keyExtractor={(item) => item.id}
-      renderItem={({ item }) => <ClubCard club={item} />}
+      renderItem={renderClubCard}
+      getItemLayout={(data, index) => ({
+        length: 120, // Approximate height of ClubCard
+        offset: 120 * index,
+        index,
+      })}
+      removeClippedSubviews={true}
+      maxToRenderPerBatch={10}
+      windowSize={10}
       ListHeaderComponent={renderHeader}
       ListEmptyComponent={renderEmptyState}
       showsVerticalScrollIndicator={false}

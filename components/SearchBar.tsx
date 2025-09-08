@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { StyleSheet, TextInput, View, Pressable } from "react-native";
 import { Search, X } from "lucide-react-native";
 import Colors from "@/constants/colors";
@@ -14,21 +14,28 @@ export default function SearchBar({
   onChangeText, 
   placeholder = "Search clubs..." 
 }: SearchBarProps) {
+  const inputRef = useRef<TextInput>(null);
+  
   const handleClear = () => {
     onChangeText("");
+    inputRef.current?.focus();
   };
   
   return (
     <View style={styles.container}>
       <Search size={20} color={Colors.textSecondary} style={styles.icon} />
       <TextInput
+        ref={inputRef}
         style={styles.input}
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
         placeholderTextColor={Colors.textSecondary}
         returnKeyType="search"
-        clearButtonMode="never" // We'll use our own clear button
+        clearButtonMode="never"
+        autoCorrect={false}
+        autoCapitalize="none"
+        blurOnSubmit={false}
       />
       {value.length > 0 && (
         <Pressable onPress={handleClear} style={styles.clearButton}>

@@ -22,38 +22,44 @@ const generateMeetings = (
     const targetDayIndex = daysOfWeek.indexOf(day);
     
     if (targetDayIndex !== -1) {
-      // Find all occurrences of the day in the month
+      // Find all occurrences of the target day in the month
+      const occurrences: Date[] = [];
       const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate();
       
       for (let dayOfMonth = 1; dayOfMonth <= daysInMonth; dayOfMonth++) {
         const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), dayOfMonth);
         if (date.getDay() === targetDayIndex) {
-          const weekOfMonth = Math.ceil(dayOfMonth / 7);
-          let shouldInclude = true;
+          occurrences.push(date);
+        }
+      }
+      
+      // Filter based on meeting pattern
+      let selectedDates: Date[] = [];
+      
+      if (frequency === 'Weekly' || meetingPattern.includes('Every')) {
+        selectedDates = occurrences;
+      } else if (frequency === 'Bi-weekly') {
+        if (meetingPattern.includes('1st and 3rd')) {
+          selectedDates = [occurrences[0], occurrences[2]].filter(Boolean);
+        } else if (meetingPattern.includes('2nd and 4th')) {
+          selectedDates = [occurrences[1], occurrences[3]].filter(Boolean);
+        }
+      }
+      
+      // Add meetings that are in the future
+      for (const date of selectedDates) {
+        if (date >= today) {
+          meetings.push({
+            date: date.toISOString().split("T")[0],
+            startTime,
+            endTime,
+            location,
+            description: monthOffset === 0 ? "Regular club meeting" : undefined,
+            id: `${date.toISOString().split("T")[0]}-${startTime}`,
+            cancelled: false
+          });
           
-          // Handle different meeting patterns
-          if (frequency === 'Bi-weekly') {
-            if (meetingPattern.includes('1st and 3rd')) {
-              shouldInclude = weekOfMonth === 1 || weekOfMonth === 3;
-            } else if (meetingPattern.includes('2nd and 4th')) {
-              shouldInclude = weekOfMonth === 2 || weekOfMonth === 4;
-            }
-          }
-          
-          // Only add future meetings
-          if (date >= today && shouldInclude) {
-            meetings.push({
-              date: date.toISOString().split("T")[0],
-              startTime,
-              endTime,
-              location,
-              description: monthOffset === 0 ? "Regular club meeting" : undefined,
-              id: `${date.toISOString().split("T")[0]}-${startTime}`,
-              cancelled: false
-            });
-            
-            if (meetings.length >= count) break;
-          }
+          if (meetings.length >= count) break;
         }
       }
     }
@@ -152,7 +158,12 @@ const parseMeetingInfo = (meetingDays: string) => {
   let meetingDay = '';
   let meetingCount = 24; // Generate for 6 months
   
-  if (meetingDays.includes('1st and 3rd') || meetingDays.includes('2nd and 4th')) {
+  // Handle special cases like Trading Card Club with multiple patterns
+  if (meetingDays.includes('1st and 3rd') && meetingDays.includes('2nd and 4th')) {
+    // This club meets every week (both 1st/3rd and 2nd/4th)
+    meetingFrequency = 'Weekly';
+    meetingCount = 24;
+  } else if (meetingDays.includes('1st and 3rd') || meetingDays.includes('2nd and 4th')) {
     meetingFrequency = 'Bi-weekly';
     meetingCount = 12; // 6 months * 2 per month
   } else if (meetingDays.includes('Every')) {
@@ -763,7 +774,7 @@ const realClubData = [
     presidentName: "Minaal Mokarim",
     presidentEmail: "mokarim0944@mydusd.org",
     advisorName: "Ramany Kaplan",
-    meetingDays: "2nd and 4th Thursday; switches to 1st and 3rd Friday, 2nd and 4th Friday during daylight savings",
+    meetingDays: "2nd and 4th Thursday",
     meetingTime: "Lunch",
     meetingRoom: "L-206"
   },
