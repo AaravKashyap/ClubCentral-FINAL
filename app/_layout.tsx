@@ -4,9 +4,11 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
+import { View, StyleSheet } from "react-native";
 import Colors from "@/constants/colors";
 import { AuthProvider } from '@/store/auth';
 import AuthGuard from '@/components/AuthGuard';
+import { PWABanner } from '@/components/PWABanner';
 
 
 
@@ -50,8 +52,9 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   return (
-    <>
+    <View style={styles.container}>
       <StatusBar style="dark" />
+      <PWABanner />
       <Stack
         screenOptions={{
           headerBackTitle: "Back",
@@ -84,6 +87,12 @@ function RootLayoutNav() {
           }} 
         />
       </Stack>
-    </>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});

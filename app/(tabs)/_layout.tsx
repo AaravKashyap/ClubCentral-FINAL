@@ -1,15 +1,18 @@
 import React from "react";
+import { View, StyleSheet } from "react-native";
 import { Tabs } from "expo-router";
 import { Home, Search, Calendar, Heart, Bell } from "lucide-react-native";
 import Colors from "@/constants/colors";
 import { useAuth } from "@/store/auth";
+import { PWAStatus } from "@/components/PWAStatus";
 
 export default function TabLayout() {
   const { user } = useAuth();
   const isSuperAdmin = user?.role === 'super_admin';
 
   return (
-    <Tabs
+    <View style={styles.container}>
+      <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors.primary,
         tabBarInactiveTintColor: Colors.textSecondary,
@@ -65,6 +68,14 @@ export default function TabLayout() {
           }}
         />
       )}
-    </Tabs>
+      </Tabs>
+      <PWAStatus />
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});

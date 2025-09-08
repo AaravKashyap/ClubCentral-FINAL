@@ -1,11 +1,11 @@
 {
-  "name": "ClubCentral - Dublin High School Clubs",
-  "short_name": "ClubCentral",
-  "description": "Discover and join clubs at Dublin High School",
+  "name": "Campus Club Finder",
+  "short_name": "Club Finder",
+  "description": "Find and join campus clubs and organizations",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#007AFF",
+  "theme_color": "#3b82f6",
   "orientation": "portrait",
   "scope": "/",
   "icons": [
@@ -23,5 +23,6 @@
     }
   ],
   "categories": ["education", "social"],
-  "lang": "en-US"
+  "lang": "en",
+  "dir": "ltr"
 }
