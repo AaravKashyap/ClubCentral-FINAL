@@ -45,6 +45,15 @@ const generateMeetings = (
       }
     }
     
+    // Debug: Log first few occurrences for verification
+    if (occurrences.length > 0 && monthOffset === 0) {
+      const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+      console.log(`${meetingPattern} - Target: ${day} (index ${targetDayIndex})`);
+      occurrences.slice(0, 2).forEach((d, i) => {
+        console.log(`  Occurrence ${i + 1}: ${d.toISOString().split('T')[0]} - ${dayNames[d.getDay()]}`);
+      });
+    }
+    
     // Filter based on meeting pattern
     let selectedDates: Date[] = [];
     

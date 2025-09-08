@@ -30,7 +30,9 @@ export default function CalendarScreen() {
     }, {});
     
     const sectionsData = Object.keys(groupedMeetings).sort().map(date => {
-      const meetingDate = new Date(date + 'T00:00:00'); // Ensure proper date parsing
+      // Parse date components to avoid timezone issues
+      const [year, month, day] = date.split('-').map(Number);
+      const meetingDate = new Date(year, month - 1, day); // month is 0-indexed
       return {
         title: meetingDate.toLocaleDateString('en-US', { 
           weekday: 'long', 
