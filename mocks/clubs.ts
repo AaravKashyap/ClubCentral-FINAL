@@ -1,4 +1,5 @@
 import { Club, ClubCategory, MeetingFrequency } from "@/types/club";
+import { getMeetingTime } from "@/constants/bellSchedule";
 
 const generateMeetings = (
   count: number, 
@@ -6,7 +7,8 @@ const generateMeetings = (
   startTime: string, 
   endTime: string, 
   location: string,
-  frequency: MeetingFrequency
+  frequency: MeetingFrequency,
+  meetingPattern: string
 ): any[] => {
   const meetings = [];
   const today = new Date();
@@ -26,14 +28,20 @@ const generateMeetings = (
       for (let dayOfMonth = 1; dayOfMonth <= daysInMonth; dayOfMonth++) {
         const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), dayOfMonth);
         if (date.getDay() === targetDayIndex) {
-          // For bi-weekly, only include 1st and 3rd, 2nd and 4th, etc.
+          const weekOfMonth = Math.ceil(dayOfMonth / 7);
+          let shouldInclude = true;
+          
+          // Handle different meeting patterns
           if (frequency === 'Bi-weekly') {
-            const weekOfMonth = Math.ceil(dayOfMonth / 7);
-            if (weekOfMonth % 2 === 0) continue; // Skip even weeks for 1st/3rd, odd for 2nd/4th
+            if (meetingPattern.includes('1st and 3rd')) {
+              shouldInclude = weekOfMonth === 1 || weekOfMonth === 3;
+            } else if (meetingPattern.includes('2nd and 4th')) {
+              shouldInclude = weekOfMonth === 2 || weekOfMonth === 4;
+            }
           }
           
           // Only add future meetings
-          if (date >= today) {
+          if (date >= today && shouldInclude) {
             meetings.push({
               date: date.toISOString().split("T")[0],
               startTime,
@@ -160,7 +168,7 @@ const parseMeetingInfo = (meetingDays: string) => {
     }
   }
   
-  return { meetingFrequency, meetingDay, meetingCount };
+  return { meetingFrequency, meetingDay, meetingCount, meetingPattern: meetingDays };
 };
 
 // Real club data from provided information
@@ -1069,22 +1077,13 @@ const realClubData = [
 
 export const clubs: Club[] = realClubData.map((data, index) => {
   const category = determineCategory(data.name);
-  const { meetingFrequency, meetingDay, meetingCount } = parseMeetingInfo(data.meetingDays);
+  const { meetingFrequency, meetingDay, meetingCount, meetingPattern } = parseMeetingInfo(data.meetingDays);
   
   // Set meeting time to "Lunch" if not specified or empty
   const meetingTime = data.meetingTime || "Lunch";
   
-  // Generate start and end times based on meeting time
-  let startTime = "12:00";
-  let endTime = "13:00";
-  if (meetingTime !== "Lunch") {
-    // For non-lunch times, assume 1 hour duration
-    startTime = meetingTime;
-    // Simple end time calculation (add 1 hour)
-    const [hours, minutes] = startTime.split(":");
-    const endHour = (parseInt(hours) + 1).toString().padStart(2, '0');
-    endTime = `${endHour}:${minutes}`;
-  }
+  // Get proper meeting times based on bell schedule
+  const { startTime, endTime } = getMeetingTime(meetingDay, meetingTime);
   
   return {
     id: (index + 1).toString(),
@@ -1102,7 +1101,7 @@ export const clubs: Club[] = realClubData.map((data, index) => {
     imageUrl: null, // Removed fake images
     memberCount: 0, // Not provided, set to 0
     yearFounded: 0, // Not provided, set to 0
-    upcomingMeetings: generateMeetings(meetingCount, meetingDay, startTime, endTime, data.meetingRoom, meetingFrequency),
+    upcomingMeetings: generateMeetings(meetingCount, meetingDay, startTime, endTime, data.meetingRoom, meetingFrequency, meetingPattern),
     requirements: "Open to all interested students",
     socialMedia: {}
   };
