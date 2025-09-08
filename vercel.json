@@ -1,6 +1,6 @@
 {
-"buildCommand": "npm run build:web",
+"buildCommand": "bun run build:web",
 "outputDirectory": "dist",
 "framework": null,
-"installCommand": "npm install --legacy-peer-deps"
+"installCommand": "bun install"
 }
