@@ -11,7 +11,7 @@ import { Stack } from 'expo-router';
 import { useAuth } from '@/store/auth';
 import { User } from '@/types/user';
 import Colors from '@/constants/colors';
-import { CheckCircle, XCircle, Clock, Users } from 'lucide-react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function AdminManagementScreen() {
   const { user, approveAdmin, getPendingAdmins, getAllUsers } = useAuth();
@@ -66,7 +66,7 @@ export default function AdminManagementScreen() {
       <View style={styles.container}>
         <Stack.Screen options={{ title: 'Access Denied' }} />
         <View style={styles.accessDenied}>
-          <XCircle size={48} color={Colors.error} />
+          <Ionicons name="close-circle" size={48} color={Colors.error} />
           <Text style={styles.accessDeniedText}>
             You don't have permission to access this page
           </Text>
@@ -82,17 +82,17 @@ export default function AdminManagementScreen() {
       {/* Stats */}
       <View style={styles.statsContainer}>
         <View style={styles.statCard}>
-          <Users size={24} color={Colors.primary} />
+          <Ionicons name="people" size={24} color={Colors.primary} />
           <Text style={styles.statNumber}>{allUsers.length}</Text>
           <Text style={styles.statLabel}>Total Users</Text>
         </View>
         <View style={styles.statCard}>
-          <Clock size={24} color={Colors.warning} />
+          <Ionicons name="time" size={24} color={Colors.warning} />
           <Text style={styles.statNumber}>{pendingAdmins.length}</Text>
           <Text style={styles.statLabel}>Pending Approvals</Text>
         </View>
         <View style={styles.statCard}>
-          <CheckCircle size={24} color={Colors.success} />
+          <Ionicons name="checkmark-circle" size={24} color={Colors.success} />
           <Text style={styles.statNumber}>
             {allUsers.filter(u => u.role === 'admin' && u.isApproved).length}
           </Text>
@@ -105,7 +105,7 @@ export default function AdminManagementScreen() {
         <Text style={styles.sectionTitle}>Pending Admin Approvals</Text>
         {pendingAdmins.length === 0 ? (
           <View style={styles.emptyState}>
-            <CheckCircle size={48} color={Colors.success} />
+            <Ionicons name="checkmark-circle" size={48} color={Colors.success} />
             <Text style={styles.emptyStateText}>No pending approvals</Text>
           </View>
         ) : (
@@ -124,7 +124,7 @@ export default function AdminManagementScreen() {
                 onPress={() => handleApproveAdmin(admin.id)}
                 disabled={loading}
               >
-                <CheckCircle size={20} color="white" />
+                <Ionicons name="checkmark-circle" size={20} color="white" />
                 <Text style={styles.approveButtonText}>Approve</Text>
               </TouchableOpacity>
             </View>

@@ -9,7 +9,7 @@ import {
   RefreshControl,
 } from 'react-native';
 import { Stack } from 'expo-router';
-import { Check, Clock, User, Mail, Building } from 'lucide-react-native';
+import { Ionicons } from '@expo/vector-icons';
 import Colors from '@/constants/colors';
 import { useAuth } from '@/store/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -114,7 +114,7 @@ export default function NotificationsScreen() {
     <View key={notification.id} style={styles.notificationCard}>
       <View style={styles.notificationHeader}>
         <View style={styles.iconContainer}>
-          <User size={20} color={Colors.primary} />
+          <Ionicons name="person" size={20} color={Colors.primary} />
         </View>
         <View style={styles.notificationContent}>
           <Text style={styles.notificationTitle}>New Admin Request</Text>
@@ -123,19 +123,19 @@ export default function NotificationsScreen() {
           </Text>
         </View>
         <View style={styles.timeContainer}>
-          <Clock size={14} color={Colors.textSecondary} />
+          <Ionicons name="time" size={14} color={Colors.textSecondary} />
           <Text style={styles.timeText}>{formatDate(notification.createdAt)}</Text>
         </View>
       </View>
       
       <View style={styles.notificationDetails}>
         <View style={styles.detailRow}>
-          <Mail size={16} color={Colors.textSecondary} />
+          <Ionicons name="mail" size={16} color={Colors.textSecondary} />
           <Text style={styles.detailText}>{notification.userEmail}</Text>
         </View>
         {notification.clubName && (
           <View style={styles.detailRow}>
-            <Building size={16} color={Colors.textSecondary} />
+            <Ionicons name="business" size={16} color={Colors.textSecondary} />
             <Text style={styles.detailLabel}>Club:</Text>
             <Text style={styles.detailText}>{notification.clubName}</Text>
           </View>
@@ -148,7 +148,7 @@ export default function NotificationsScreen() {
           onPress={() => handleApproveAdmin(notification)}
           disabled={isApproving}
         >
-          <Check size={16} color={Colors.white} />
+          <Ionicons name="checkmark" size={16} color={Colors.white} />
           <Text style={styles.approveButtonText}>
             {isApproving ? 'Approving...' : 'Approve'}
           </Text>

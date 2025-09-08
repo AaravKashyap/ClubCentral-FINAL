@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
-import { Download, X, WifiOff } from 'lucide-react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { usePWA } from '@/hooks/usePWA';
 
 export function PWABanner() {
@@ -14,7 +14,7 @@ export function PWABanner() {
   if (!isOnline) {
     return (
       <View style={[styles.banner, styles.offlineBanner]}>
-        <WifiOff size={20} color="#ef4444" />
+        <Ionicons name="wifi-outline" size={20} color="#ef4444" />
         <Text style={[styles.bannerText, styles.offlineText]}>
           You&apos;re offline. Some features may not work.
         </Text>
@@ -29,7 +29,7 @@ export function PWABanner() {
   return (
     <View style={styles.banner}>
       <View style={styles.bannerContent}>
-        <Download size={20} color="#3b82f6" />
+        <Ionicons name="download-outline" size={20} color="#3b82f6" />
         <View style={styles.textContainer}>
           <Text style={styles.bannerTitle}>Install App</Text>
           <Text style={styles.bannerSubtitle}>
@@ -50,7 +50,7 @@ export function PWABanner() {
           onPress={() => setShowBanner(false)}
           testID="pwa-close-button"
         >
-          <X size={18} color="#6b7280" />
+          <Ionicons name="close" size={18} color="#6b7280" />
         </TouchableOpacity>
       </View>
     </View>

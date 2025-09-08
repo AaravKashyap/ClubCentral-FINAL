@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Smartphone, Wifi, WifiOff } from 'lucide-react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { usePWA } from '@/hooks/usePWA';
 
 export function PWAStatus() {
@@ -13,7 +13,7 @@ export function PWAStatus() {
   return (
     <View style={styles.container}>
       <View style={styles.statusItem}>
-        <Smartphone size={16} color={isInstalled ? '#10b981' : '#6b7280'} />
+        <Ionicons name="phone-portrait" size={16} color={isInstalled ? '#10b981' : '#6b7280'} />
         <Text style={[styles.statusText, isInstalled && styles.activeText]}>
           {isInstalled ? 'Installed' : 'Web App'}
         </Text>
@@ -21,9 +21,9 @@ export function PWAStatus() {
       
       <View style={styles.statusItem}>
         {isOnline ? (
-          <Wifi size={16} color="#10b981" />
+          <Ionicons name="wifi" size={16} color="#10b981" />
         ) : (
-          <WifiOff size={16} color="#ef4444" />
+          <Ionicons name="wifi-outline" size={16} color="#ef4444" />
         )}
         <Text style={[styles.statusText, isOnline && styles.activeText]}>
           {isOnline ? 'Online' : 'Offline'}
