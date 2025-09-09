@@ -8,7 +8,7 @@ import {
   Alert,
   RefreshControl,
 } from 'react-native';
-import { Stack } from 'expo-router';
+
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '@/constants/colors';
 import { useAuth } from '@/store/auth';
@@ -160,7 +160,7 @@ export default function NotificationsScreen() {
   if (user?.role !== 'super_admin') {
     return (
       <View style={styles.container}>
-        <Stack.Screen options={{ title: 'Notifications' }} />
+
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyText}>Access Restricted</Text>
           <Text style={styles.emptySubtext}>
@@ -173,7 +173,6 @@ export default function NotificationsScreen() {
 
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{ title: 'Notifications' }} />
       <ScrollView
         style={styles.scrollView}
         refreshControl={
