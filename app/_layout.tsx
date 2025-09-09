@@ -4,7 +4,7 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet } from "react-native";
 import Colors from "@/constants/colors";
 import { AuthProvider } from '@/store/auth';
-import { PWABanner } from '@/components/PWABanner';
+import AuthGuard from '@/components/AuthGuard';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { trpc, trpcClient } from '@/lib/trpc';
 
@@ -29,7 +29,9 @@ export default function RootLayout() {
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <RootLayoutNav />
+          <AuthGuard>
+            <RootLayoutNav />
+          </AuthGuard>
         </AuthProvider>
       </QueryClientProvider>
     </trpc.Provider>

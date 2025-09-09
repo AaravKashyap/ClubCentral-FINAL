@@ -39,7 +39,12 @@ export default function HomeScreen() {
   };
   
   const handleLogout = async () => {
-    await logout();
+    try {
+      await logout();
+      router.replace('/auth');
+    } catch (e) {
+      console.log('[Home] Logout error', e);
+    }
   };
   
   return (
