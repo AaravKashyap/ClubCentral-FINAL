@@ -4,10 +4,10 @@ import { StatusBar } from "expo-status-bar";
 import { View, StyleSheet } from "react-native";
 import Colors from "@/constants/colors";
 import { AuthProvider } from '@/store/auth';
-import AuthGuard from '@/components/AuthGuard';
 import { PWABanner } from '@/components/PWABanner';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { trpc, trpcClient } from '@/lib/trpc';
+import { ThemeProvider, DefaultTheme } from '@react-navigation/native';
 
 export const unstable_settings = {
   initialRouteName: "(tabs)",
@@ -29,9 +29,9 @@ export default function RootLayout() {
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <AuthGuard>
+          <ThemeProvider value={DefaultTheme}>
             <RootLayoutNav />
-          </AuthGuard>
+          </ThemeProvider>
         </AuthProvider>
       </QueryClientProvider>
     </trpc.Provider>
