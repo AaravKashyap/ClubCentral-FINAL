@@ -1,4 +1,4 @@
-const CACHE_NAME = 'campus-club-finder-v1';
+const CACHE_NAME = 'campus-club-finder-v2';
 const urlsToCache = [
   '/',
   '/static/js/bundle.js',
@@ -13,7 +13,7 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME)
       .then((cache) => {
         console.log('Opened cache');
-        return cache.addAll(urlsToCache);
+        return cache.addAll(urlsToCache).then(() => self.skipWaiting());
       })
       .catch((error) => {
         console.log('Cache install failed:', error);
@@ -51,8 +51,9 @@ self.addEventListener('activate', (event) => {
             console.log('Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
+          return Promise.resolve();
         })
-      );
+      ).then(() => self.clients.claim());
     })
   );
 });

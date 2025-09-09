@@ -21,11 +21,11 @@ export function usePWA(): UsePWAReturn {
   const [deferredPrompt, setDeferredPrompt] = useState<PWAInstallPrompt | null>(null);
 
   const isSupported = Platform.OS === 'web';
+  const ENABLE_SW = false as const;
 
   useEffect(() => {
     if (!isSupported) return;
 
-    // Check if already installed
     const checkInstalled = () => {
       if (typeof window !== 'undefined') {
         const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
@@ -34,20 +34,16 @@ export function usePWA(): UsePWAReturn {
       }
     };
 
-    // Register service worker
     const registerServiceWorker = async () => {
       if ('serviceWorker' in navigator) {
         try {
           const registration = await navigator.serviceWorker.register('/sw.js');
           console.log('[PWA] Service Worker registered successfully:', registration);
-          
-          // Check for updates
           registration.addEventListener('updatefound', () => {
             const newWorker = registration.installing;
             if (newWorker) {
               newWorker.addEventListener('statechange', () => {
                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  // New content is available, refresh the page
                   console.log('[PWA] New content available, reloading...');
                   window.location.reload();
                 }
@@ -56,38 +52,34 @@ export function usePWA(): UsePWAReturn {
           });
         } catch (error) {
           console.error('[PWA] Service Worker registration failed:', error);
-          // Don't let this break the app
         }
       }
     };
 
-    // Handle install prompt
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as any);
       setIsInstallable(true);
     };
 
-    // Handle app installed
     const handleAppInstalled = () => {
       setIsInstalled(true);
       setIsInstallable(false);
       setDeferredPrompt(null);
     };
 
-    // Handle online/offline status
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
 
-    // Set up event listeners
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.addEventListener('appinstalled', handleAppInstalled);
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
 
-    // Initialize
     checkInstalled();
-    registerServiceWorker();
+    if (ENABLE_SW) {
+      registerServiceWorker();
+    }
     setIsOnline(navigator.onLine);
 
     return () => {
