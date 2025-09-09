@@ -58,15 +58,17 @@ export default function TabLayout() {
             tabBarIcon: ({ color, size }) => <Ionicons name="heart" size={size} color={color} />,
           }}
         />
-        <Tabs.Screen
-          name="notifications"
-          options={{
-            title: "Notifications",
-            tabBarIcon: ({ color, size }) => <Ionicons name="notifications" size={size} color={color} />,
-            href: isSuperAdmin ? undefined : null,
-            tabBarButton: isSuperAdmin ? undefined : () => null,
-          }}
-        />
+        {isSuperAdmin && (
+          <Tabs.Screen
+            name="notifications"
+            options={{
+              title: "Notifications",
+              tabBarIcon: ({ color, size }) => (
+                <Ionicons name="notifications" size={size} color={color} />
+              ),
+            }}
+          />
+        )}
       </Tabs>
   );
 }
