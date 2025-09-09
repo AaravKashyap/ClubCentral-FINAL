@@ -1,13 +1,13 @@
 import { Stack } from "expo-router";
 import { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import Colors from "@/constants/colors";
 import { AuthProvider } from '@/store/auth';
 import { PWABanner } from '@/components/PWABanner';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { trpc, trpcClient } from '@/lib/trpc';
-import { ThemeProvider, DefaultTheme } from '@react-navigation/native';
+
 
 export const unstable_settings = {
   initialRouteName: "(tabs)",
@@ -29,9 +29,7 @@ export default function RootLayout() {
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <ThemeProvider value={DefaultTheme}>
-            <RootLayoutNav />
-          </ThemeProvider>
+          <RootLayoutNav />
         </AuthProvider>
       </QueryClientProvider>
     </trpc.Provider>
@@ -41,9 +39,6 @@ export default function RootLayout() {
 function RootLayoutNav() {
   console.log('[RootLayoutNav] Rendering');
   return (
-    <View style={styles.container}>
-      <StatusBar style="dark" />
-      <PWABanner />
       <Stack
         screenOptions={{
           headerBackTitle: "Back",
@@ -76,12 +71,7 @@ function RootLayoutNav() {
           }} 
         />
       </Stack>
-    </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
+const styles = StyleSheet.create({});
