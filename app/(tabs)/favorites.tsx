@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { StyleSheet, Text, View, Pressable, SectionList } from "react-native";
-import { Heart, Search, Users } from "lucide-react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 
 import Colors from "@/constants/colors";
@@ -37,7 +37,7 @@ export default function FavoritesScreen() {
       sectionData.push({
         title: 'My Clubs',
         data: joinedClubs,
-        icon: <Users size={20} color={Colors.secondary} />
+        icon: <Ionicons name="people" size={20} color={Colors.secondary} />
       });
     }
     
@@ -45,7 +45,7 @@ export default function FavoritesScreen() {
       sectionData.push({
         title: 'Favorites',
         data: favoriteClubs,
-        icon: <Heart size={20} color={Colors.primary} />
+        icon: <Ionicons name="heart" size={20} color={Colors.primary} />
       });
     }
     
@@ -67,10 +67,10 @@ export default function FavoritesScreen() {
               ? "Join clubs to get updates and mark favorites for quick access."
               : "Tap the heart icon on any club to add it to your favorites for quick access."
           }
-          icon={<Heart size={48} color={Colors.textSecondary} />}
+          icon={<Ionicons name="heart" size={48} color={Colors.textSecondary} />}
         />
         <Pressable style={styles.exploreButton} onPress={handleExplorePress}>
-          <Search size={20} color="white" />
+          <Ionicons name="search" size={20} color="white" />
           <Text style={styles.exploreButtonText}>Explore Clubs</Text>
         </Pressable>
       </View>

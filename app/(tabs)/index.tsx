@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, ScrollView, Pressable, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
-import { Search, Heart, Calendar, Users, Sparkles, LogOut } from "lucide-react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 import Colors from "@/constants/colors";
 import ClubCard from "@/components/ClubCard";
@@ -49,11 +49,11 @@ export default function HomeScreen() {
         <View style={styles.heroHeader}>
           <View>
             <View style={styles.heroIcon}>
-              <Sparkles size={32} color={Colors.primary} />
+              <Ionicons name="sparkles" size={32} color={Colors.primary} />
             </View>
           </View>
           <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-            <LogOut size={20} color={Colors.textSecondary} />
+            <Ionicons name="log-out" size={20} color={Colors.textSecondary} />
           </TouchableOpacity>
         </View>
         <Text style={styles.heroTitle}>Club Central</Text>
@@ -72,7 +72,7 @@ export default function HomeScreen() {
       <View style={styles.quickActions}>
         <Pressable style={styles.actionCard} onPress={handleExplorePress}>
           <View style={styles.actionIcon}>
-            <Search size={24} color={Colors.primary} />
+            <Ionicons name="search" size={24} color={Colors.primary} />
           </View>
           <Text style={styles.actionTitle}>Explore Clubs</Text>
           <Text style={styles.actionSubtitle}>Browse all {allClubs.length} clubs</Text>
@@ -80,7 +80,7 @@ export default function HomeScreen() {
         
         <Pressable style={styles.actionCard} onPress={handleFavoritesPress}>
           <View style={styles.actionIcon}>
-            <Heart size={24} color={Colors.secondary} />
+            <Ionicons name="heart" size={24} color={Colors.secondary} />
           </View>
           <Text style={styles.actionTitle}>My Favorites</Text>
           <Text style={styles.actionSubtitle}>Quick access</Text>
@@ -88,7 +88,7 @@ export default function HomeScreen() {
         
         <Pressable style={styles.actionCard} onPress={handleCalendarPress}>
           <View style={styles.actionIcon}>
-            <Calendar size={24} color={Colors.primary} />
+            <Ionicons name="calendar" size={24} color={Colors.primary} />
           </View>
           <Text style={styles.actionTitle}>Meetings</Text>
           <Text style={styles.actionSubtitle}>Upcoming events</Text>
@@ -98,17 +98,17 @@ export default function HomeScreen() {
       {/* Stats Section */}
       <View style={styles.statsSection}>
         <View style={styles.statCard}>
-          <Users size={20} color={Colors.primary} />
+          <Ionicons name="people" size={20} color={Colors.primary} />
           <Text style={styles.statNumber}>{totalUsers}</Text>
           <Text style={styles.statLabel}>App Users</Text>
         </View>
         <View style={styles.statCard}>
-          <Sparkles size={20} color={Colors.secondary} />
+          <Ionicons name="sparkles" size={20} color={Colors.secondary} />
           <Text style={styles.statNumber}>{allClubs.length}</Text>
           <Text style={styles.statLabel}>Active Clubs</Text>
         </View>
         <View style={styles.statCard}>
-          <Calendar size={20} color={Colors.primary} />
+          <Ionicons name="calendar" size={20} color={Colors.primary} />
           <Text style={styles.statNumber}>{upcomingMeetings.length}</Text>
           <Text style={styles.statLabel}>This Week</Text>
         </View>

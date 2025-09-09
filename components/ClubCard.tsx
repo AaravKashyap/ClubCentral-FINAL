@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, View, Pressable } from "react-native";
 import { Image } from "expo-image";
-import { Heart, ImageIcon } from "lucide-react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 
 import { Club } from "@/types/club";
@@ -42,7 +42,7 @@ export default function ClubCard({ club, compact = false }: ClubCardProps) {
           />
         ) : (
           <View style={[styles.compactImage, styles.placeholderImage]}>
-            <ImageIcon size={24} color={Colors.textSecondary} />
+            <Ionicons name="image" size={24} color={Colors.textSecondary} />
           </View>
         )}
         <View style={styles.compactContent}>
@@ -54,10 +54,10 @@ export default function ClubCard({ club, compact = false }: ClubCardProps) {
           onPress={handleFavoritePress}
           hitSlop={10}
         >
-          <Heart 
+          <Ionicons 
+            name={isFavorited ? "heart" : "heart-outline"}
             size={18} 
             color={isFavorited ? Colors.error : Colors.textSecondary}
-            fill={isFavorited ? Colors.error : "none"}
           />
         </Pressable>
       </Pressable>
@@ -78,7 +78,7 @@ export default function ClubCard({ club, compact = false }: ClubCardProps) {
         />
       ) : (
         <View style={[styles.image, styles.placeholderImage]}>
-          <ImageIcon size={48} color={Colors.textSecondary} />
+          <Ionicons name="image" size={48} color={Colors.textSecondary} />
         </View>
       )}
       <View style={styles.content}>
@@ -89,10 +89,10 @@ export default function ClubCard({ club, compact = false }: ClubCardProps) {
             onPress={handleFavoritePress}
             hitSlop={10}
           >
-            <Heart 
+            <Ionicons 
+              name={isFavorited ? "heart" : "heart-outline"}
               size={22} 
               color={isFavorited ? Colors.error : Colors.textSecondary}
-              fill={isFavorited ? Colors.error : "none"}
             />
           </Pressable>
         </View>

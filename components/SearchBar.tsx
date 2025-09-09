@@ -1,6 +1,6 @@
 import React, { useRef, memo } from "react";
 import { StyleSheet, TextInput, View, Pressable } from "react-native";
-import { Search, X } from "lucide-react-native";
+import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/colors";
 
 type SearchBarProps = {
@@ -23,7 +23,7 @@ const SearchBar = memo(function SearchBar({
   
   return (
     <View style={styles.container}>
-      <Search size={20} color={Colors.textSecondary} style={styles.icon} />
+      <Ionicons name="search" size={20} color={Colors.textSecondary} style={styles.icon} />
       <TextInput
         ref={inputRef}
         style={styles.input}
@@ -41,7 +41,7 @@ const SearchBar = memo(function SearchBar({
       />
       {value.length > 0 && (
         <Pressable onPress={handleClear} style={styles.clearButton}>
-          <X size={18} color={Colors.textSecondary} />
+          <Ionicons name="close" size={18} color={Colors.textSecondary} />
         </Pressable>
       )}
     </View>

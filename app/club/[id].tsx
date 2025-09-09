@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { StyleSheet, Text, View, ScrollView, Pressable, Linking, Alert, TextInput } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { Image } from "expo-image";
-import { Heart, Mail, Instagram, Globe, Users, Calendar, MapPin, Clock, Info, ImageIcon, Camera, Save, X, Trash2 } from "lucide-react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import Colors from "@/constants/colors";
@@ -167,7 +167,7 @@ export default function ClubDetailScreen() {
           />
         ) : (
           <View style={[styles.image, styles.placeholderImage]}>
-            <ImageIcon size={64} color={Colors.textSecondary} />
+            <Ionicons name="image" size={64} color={Colors.textSecondary} />
             <Text style={styles.placeholderText}>No image uploaded</Text>
           </View>
         )}
@@ -178,14 +178,14 @@ export default function ClubDetailScreen() {
               style={styles.imageActionButton}
               onPress={() => setIsEditingImage(true)}
             >
-              <Camera size={20} color="white" />
+              <Ionicons name="camera" size={20} color="white" />
             </Pressable>
             {club.imageUrl && club.imageUrl.trim() !== '' && club.imageUrl !== 'undefined' && club.imageUrl !== 'null' && (
               <Pressable 
                 style={[styles.imageActionButton, styles.removeButton]}
                 onPress={handleRemoveImage}
               >
-                <X size={20} color="white" />
+                <Ionicons name="close" size={20} color="white" />
               </Pressable>
             )}
           </View>
@@ -211,7 +211,7 @@ export default function ClubDetailScreen() {
                 setNewImageUrl('');
               }}
             >
-              <X size={16} color={Colors.textSecondary} />
+              <Ionicons name="close" size={16} color={Colors.textSecondary} />
               <Text style={styles.editCancelButtonText}>Cancel</Text>
             </Pressable>
             <Pressable 
@@ -219,7 +219,7 @@ export default function ClubDetailScreen() {
               onPress={handleUpdateImage}
               disabled={isUpdating}
             >
-              <Save size={16} color="white" />
+              <Ionicons name="save" size={16} color="white" />
               <Text style={styles.saveButtonText}>
                 {isUpdating ? 'Saving...' : 'Save'}
               </Text>
@@ -239,10 +239,9 @@ export default function ClubDetailScreen() {
             style={[styles.favoriteButton, isFavorited && styles.favoriteButtonActive]} 
             onPress={handleFavoritePress}
           >
-            <Heart 
+            <Ionicons name={isFavorited ? "heart" : "heart-outline"} 
               size={20} 
               color={isFavorited ? "white" : Colors.primary}
-              fill={isFavorited ? "white" : "none"}
             />
             <Text style={[styles.favoriteText, isFavorited && styles.favoriteTextActive]}>
               {isFavorited ? "Favorited" : "Favorite"}
@@ -259,7 +258,7 @@ export default function ClubDetailScreen() {
               onPress={handleJoinLeavePress}
               disabled={isJoining || isLeaving}
             >
-              <Users size={20} color="white" />
+              <Ionicons name="people" size={20} color="white" />
               <Text style={styles.joinText}>
                 {(isJoining || isLeaving) ? 'Loading...' : isMember ? 'Leave Club' : 'Join Club'}
               </Text>
@@ -272,7 +271,7 @@ export default function ClubDetailScreen() {
       
       <View style={styles.infoSection}>
         <View style={styles.infoRow}>
-          <Users size={18} color={Colors.textSecondary} />
+          <Ionicons name="people" size={18} color={Colors.textSecondary} />
           <Text style={styles.infoText}>
             {memberCount} members
           </Text>
@@ -280,19 +279,19 @@ export default function ClubDetailScreen() {
         
         {club.yearFounded > 0 && (
           <View style={styles.infoRow}>
-            <Calendar size={18} color={Colors.textSecondary} />
+            <Ionicons name="calendar" size={18} color={Colors.textSecondary} />
             <Text style={styles.infoText}>Founded in {club.yearFounded}</Text>
           </View>
         )}
         
         <View style={styles.infoRow}>
-          <Clock size={18} color={Colors.textSecondary} />
+          <Ionicons name="time" size={18} color={Colors.textSecondary} />
           <Text style={styles.infoText}>{club.meetingFrequency} on {club.meetingDay}s</Text>
         </View>
         
         {club.meetingLocation && (
           <View style={styles.infoRow}>
-            <MapPin size={18} color={Colors.textSecondary} />
+            <Ionicons name="location" size={18} color={Colors.textSecondary} />
             <Text style={styles.infoText}>{club.meetingLocation}</Text>
           </View>
         )}
@@ -316,7 +315,7 @@ export default function ClubDetailScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Requirements</Text>
           <View style={styles.requirementsContainer}>
-            <Info size={18} color={Colors.textSecondary} style={styles.requirementsIcon} />
+            <Ionicons name="information-circle" size={18} color={Colors.textSecondary} style={styles.requirementsIcon} />
             <Text style={styles.requirementsText}>{club.requirements}</Text>
           </View>
         </View>
@@ -336,7 +335,7 @@ export default function ClubDetailScreen() {
                   style={styles.cancelButton}
                   onPress={() => handleCancelMeeting(meeting.id)}
                 >
-                  <Trash2 size={16} color={Colors.error} />
+                  <Ionicons name="trash" size={16} color={Colors.error} />
                   <Text style={styles.cancelButtonText}>Cancel Meeting</Text>
                 </Pressable>
               )}
@@ -351,20 +350,20 @@ export default function ClubDetailScreen() {
         <Text style={styles.sectionTitle}>Contact</Text>
         <View style={styles.contactContainer}>
           <Pressable style={styles.contactButton} onPress={handleEmailPress}>
-            <Mail size={20} color={Colors.primary} />
+            <Ionicons name="mail" size={20} color={Colors.primary} />
             <Text style={styles.contactText}>Email President</Text>
           </Pressable>
           
           {club.socialMedia?.instagram && (
             <Pressable style={styles.contactButton} onPress={handleInstagramPress}>
-              <Instagram size={20} color={Colors.primary} />
+              <Ionicons name="logo-instagram" size={20} color={Colors.primary} />
               <Text style={styles.contactText}>Instagram</Text>
             </Pressable>
           )}
           
           {club.socialMedia?.website && (
             <Pressable style={styles.contactButton} onPress={handleWebsitePress}>
-              <Globe size={20} color={Colors.primary} />
+              <Ionicons name="globe" size={20} color={Colors.primary} />
               <Text style={styles.contactText}>Website</Text>
             </Pressable>
           )}

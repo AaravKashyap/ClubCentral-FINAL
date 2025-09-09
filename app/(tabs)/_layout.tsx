@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Tabs } from "expo-router";
-import { Home, Search, Calendar, Heart, Bell } from "lucide-react-native";
+import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/colors";
 import { useAuth } from "@/store/auth";
 import { PWAStatus } from "@/components/PWAStatus";
@@ -35,28 +35,28 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Home",
-          tabBarIcon: ({ color, size }) => <Home size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => <Ionicons name="home" size={size} color={color} />,
         }}
       />
       <Tabs.Screen
         name="explore"
         options={{
           title: "Explore",
-          tabBarIcon: ({ color, size }) => <Search size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => <Ionicons name="search" size={size} color={color} />,
         }}
       />
       <Tabs.Screen
         name="calendar"
         options={{
           title: "Calendar",
-          tabBarIcon: ({ color, size }) => <Calendar size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => <Ionicons name="calendar" size={size} color={color} />,
         }}
       />
       <Tabs.Screen
         name="favorites"
         options={{
           title: "Favorites",
-          tabBarIcon: ({ color, size }) => <Heart size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => <Ionicons name="heart" size={size} color={color} />,
         }}
       />
       {isSuperAdmin && (
@@ -64,7 +64,7 @@ export default function TabLayout() {
           name="notifications"
           options={{
             title: "Notifications",
-            tabBarIcon: ({ color, size }) => <Bell size={size} color={color} />,
+            tabBarIcon: ({ color, size }) => <Ionicons name="notifications" size={size} color={color} />,
           }}
         />
       )}

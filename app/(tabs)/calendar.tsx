@@ -4,7 +4,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Colors from "@/constants/colors";
 import MeetingItem from "@/components/MeetingItem";
 import EmptyState from "@/components/EmptyState";
-import { Calendar } from "lucide-react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { getUpcomingMeetings } from "@/mocks/clubs";
 
 export default function CalendarScreen() {
@@ -66,7 +66,7 @@ export default function CalendarScreen() {
     <EmptyState
       title="No upcoming meetings"
       message="There are no club meetings scheduled at this time. Check back later or explore clubs to find ones that interest you!"
-      icon={<Calendar size={48} color={Colors.textSecondary} />}
+      icon={<Ionicons name="calendar" size={48} color={Colors.textSecondary} />}
     />
   );
   

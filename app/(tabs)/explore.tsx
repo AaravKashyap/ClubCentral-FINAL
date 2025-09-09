@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback } from "react";
 import { StyleSheet, Text, View, FlatList } from "react-native";
 import { useLocalSearchParams } from "expo-router";
-import { Search } from "lucide-react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 import Colors from "@/constants/colors";
 import { ClubCategory, Club } from "@/types/club";
@@ -83,7 +83,7 @@ export default function ExploreScreen() {
             ? "Try adjusting your search or filters to find what you are looking for."
             : "There are no clubs available at this time."
         }
-        icon={<Search size={40} color={Colors.textSecondary} />}
+        icon={<Ionicons name="search" size={40} color={Colors.textSecondary} />}
       />
     );
   }, [searchQuery, selectedCategory]);
