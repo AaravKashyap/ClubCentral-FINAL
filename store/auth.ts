@@ -10,38 +10,52 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
   const [isLoading, setIsLoading] = useState(true);
   const [totalUsers, setTotalUsers] = useState(0);
 
-  const initializeApp = useCallback(async () => {
-    try {
-      console.log('Initializing app...');
-      await createDefaultUsers();
-      await loadUser();
-      await loadTotalUsers();
-      console.log('App initialization complete');
-    } catch (error) {
-      console.error('App initialization error:', error);
-      setIsLoading(false);
-    }
-  }, []);
-
   // Load user from storage on app start
   useEffect(() => {
+    console.log('[Auth] useEffect triggered, starting initialization');
+    
+    const initializeApp = async () => {
+      try {
+        console.log('[Auth] Initializing app...');
+        
+        // Create default users if needed
+        await createDefaultUsers();
+        
+        // Load current user
+        await loadUser();
+        
+        // Load total users count
+        await loadTotalUsers();
+        
+        console.log('[Auth] App initialization complete');
+      } catch (error) {
+        console.error('[Auth] App initialization error:', error);
+      } finally {
+        // Always set loading to false
+        console.log('[Auth] Setting loading to false from initialization');
+        setIsLoading(false);
+      }
+    };
+    
+    // Start initialization
     initializeApp();
     
     // Fallback timeout to prevent infinite loading
     const timeout = setTimeout(() => {
-      if (isLoading) {
-        console.warn('App initialization timeout, setting loading to false');
-        setIsLoading(false);
-      }
-    }, 10000); // 10 second timeout
+      console.warn('[Auth] App initialization timeout (2s), forcing loading to false');
+      setIsLoading(false);
+    }, 2000); // 2 second timeout
     
     return () => clearTimeout(timeout);
-  }, [initializeApp, isLoading]);
+  }, []); // Run only once on mount
 
   const createDefaultUsers = async () => {
     try {
-      console.log('Checking for existing users...');
-      const usersData = await AsyncStorage.getItem('all_users');
+      console.log('[Auth] Checking for existing users...');
+      const usersData = await AsyncStorage.getItem('all_users').catch(e => {
+        console.error('[Auth] AsyncStorage error:', e);
+        return null;
+      });
       if (!usersData) {
         console.log('Creating default users...');
         // Create default super admin users
@@ -84,33 +98,35 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
           }
         ];
         
-        await AsyncStorage.setItem('all_users', JSON.stringify(defaultUsers));
-        console.log('Default users created successfully');
+        await AsyncStorage.setItem('all_users', JSON.stringify(defaultUsers)).catch(e => {
+          console.error('[Auth] Failed to save default users:', e);
+        });
+        console.log('[Auth] Default users created successfully');
       } else {
-        console.log('Users already exist in storage');
+        console.log('[Auth] Users already exist in storage');
       }
     } catch (error) {
-      console.error('Error creating default users:', error);
-      throw error;
+      console.error('[Auth] Error creating default users:', error);
+      // Don't throw, just continue
     }
   };
 
   const loadUser = async () => {
     try {
-      console.log('Loading user from storage...');
-      const userData = await AsyncStorage.getItem(STORAGE_KEY);
+      console.log('[Auth] Loading user from storage...');
+      const userData = await AsyncStorage.getItem(STORAGE_KEY).catch(e => {
+        console.error('[Auth] AsyncStorage error:', e);
+        return null;
+      });
       if (userData) {
         const parsedUser = JSON.parse(userData);
-        console.log('User loaded:', parsedUser.email);
+        console.log('[Auth] User loaded:', parsedUser.email);
         setUser(parsedUser);
       } else {
-        console.log('No user found in storage');
+        console.log('[Auth] No user found in storage');
       }
     } catch (error) {
-      console.error('Error loading user:', error);
-    } finally {
-      console.log('Setting loading to false');
-      setIsLoading(false);
+      console.error('[Auth] Error loading user:', error);
     }
   };
 

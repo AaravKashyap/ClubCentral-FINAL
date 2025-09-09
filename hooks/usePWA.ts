@@ -39,7 +39,7 @@ export function usePWA(): UsePWAReturn {
       if ('serviceWorker' in navigator) {
         try {
           const registration = await navigator.serviceWorker.register('/sw.js');
-          console.log('Service Worker registered successfully:', registration);
+          console.log('[PWA] Service Worker registered successfully:', registration);
           
           // Check for updates
           registration.addEventListener('updatefound', () => {
@@ -48,13 +48,15 @@ export function usePWA(): UsePWAReturn {
               newWorker.addEventListener('statechange', () => {
                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
                   // New content is available, refresh the page
+                  console.log('[PWA] New content available, reloading...');
                   window.location.reload();
                 }
               });
             }
           });
         } catch (error) {
-          console.error('Service Worker registration failed:', error);
+          console.error('[PWA] Service Worker registration failed:', error);
+          // Don't let this break the app
         }
       }
     };

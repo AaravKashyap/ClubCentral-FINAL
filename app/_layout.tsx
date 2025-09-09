@@ -18,7 +18,12 @@ export default function RootLayout() {
 
   useEffect(() => {
     console.log('[RootLayout] Mounted');
+    return () => {
+      console.log('[RootLayout] Unmounted');
+    };
   }, []);
+
+  console.log('[RootLayout] Rendering');
 
   return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
@@ -34,6 +39,7 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
+  console.log('[RootLayoutNav] Rendering');
   return (
     <View style={styles.container}>
       <StatusBar style="dark" />

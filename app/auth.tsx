@@ -15,6 +15,7 @@ import Colors from '@/constants/colors';
 import { UserRole } from '@/types/user';
 
 export default function AuthScreen() {
+  console.log('[AuthScreen] Rendering');
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

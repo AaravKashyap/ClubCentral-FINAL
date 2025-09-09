@@ -10,18 +10,27 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const segments = useSegments();
 
   useEffect(() => {
-    if (isLoading) return;
+    console.log('[AuthGuard] State:', { isLoading, isAuthenticated, segments });
+    
+    if (isLoading) {
+      console.log('[AuthGuard] Still loading, skipping navigation');
+      return;
+    }
 
     const inAuthGroup = segments[0] === 'auth';
+    console.log('[AuthGuard] inAuthGroup:', inAuthGroup);
 
     if (!isAuthenticated && !inAuthGroup) {
+      console.log('[AuthGuard] Not authenticated, redirecting to /auth');
       router.replace('/auth');
     } else if (isAuthenticated && inAuthGroup) {
+      console.log('[AuthGuard] Authenticated but on auth page, redirecting to /(tabs)');
       router.replace('/(tabs)');
     }
   }, [isAuthenticated, isLoading, segments, router]);
 
   if (isLoading) {
+    console.log('[AuthGuard] Rendering loading screen');
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color={Colors.primary} />
@@ -29,6 +38,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     );
   }
 
+  console.log('[AuthGuard] Rendering children');
   return <>{children}</>;
 }
 
