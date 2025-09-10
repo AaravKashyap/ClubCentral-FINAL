@@ -1,7 +1,7 @@
 import { db } from './index';
 import { users, clubs, clubTags, clubMeetings } from './schema';
 import { clubs as mockClubs } from '@/mocks/clubs';
-import bcrypt from 'bcryptjs';
+import * as bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
 
 export async function seedDatabase() {
