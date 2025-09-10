@@ -3,6 +3,10 @@ import { trpcServer } from "@hono/trpc-server";
 import { cors } from "hono/cors";
 import { appRouter } from "./trpc/app-router";
 import { createContext } from "./trpc/create-context";
+import { seedDatabase } from "./db/seed";
+
+// Initialize database on startup
+seedDatabase().catch(console.error);
 
 // app will be mounted at /api
 const app = new Hono();
