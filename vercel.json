@@ -2,16 +2,5 @@
   "buildCommand": "npx expo export --platform web",
   "outputDirectory": "dist",
   "framework": null,
-  "installCommand": "npm install --legacy-peer-deps",
-  "functions": {
-    "backend/hono.ts": {
-      "runtime": "nodejs18.x"
-    }
-  },
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/backend/hono.ts"
-    }
-  ]
+  "installCommand": "npm install --legacy-peer-deps"
 }

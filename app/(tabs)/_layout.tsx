@@ -1,4 +1,5 @@
 import React from "react";
+import { Platform } from "react-native";
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/colors";
@@ -57,16 +58,17 @@ export default function TabLayout() {
             tabBarIcon: ({ color, size }) => <Ionicons name="heart" size={size} color={color} />,
           }}
         />
-        <Tabs.Screen
-          name="notifications"
-          options={{
-            title: "Notifications",
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="notifications" size={size} color={color} />
-            ),
-            href: isSuperAdmin ? undefined : null,
-          }}
-        />
+        {isSuperAdmin && (
+          <Tabs.Screen
+            name="notifications"
+            options={{
+              title: "Notifications",
+              tabBarIcon: ({ color, size }) => (
+                <Ionicons name="notifications" size={size} color={color} />
+              ),
+            }}
+          />
+        )}
       </Tabs>
   );
 }

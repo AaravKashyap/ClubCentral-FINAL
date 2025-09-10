@@ -13,7 +13,6 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
   // Load user from storage on app start
   useEffect(() => {
     console.log('[Auth] useEffect triggered, starting initialization');
-    let mounted = true;
     
     const initializeApp = async () => {
       try {
@@ -32,11 +31,9 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
       } catch (error) {
         console.error('[Auth] App initialization error:', error);
       } finally {
-        // Always set loading to false if component is still mounted
-        if (mounted) {
-          console.log('[Auth] Setting loading to false from initialization');
-          setIsLoading(false);
-        }
+        // Always set loading to false
+        console.log('[Auth] Setting loading to false from initialization');
+        setIsLoading(false);
       }
     };
     
@@ -45,16 +42,11 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
     
     // Fallback timeout to prevent infinite loading
     const timeout = setTimeout(() => {
-      if (mounted) {
-        console.warn('[Auth] App initialization timeout (1s), forcing loading to false');
-        setIsLoading(false);
-      }
-    }, 1000); // 1 second timeout
+      console.warn('[Auth] App initialization timeout (2s), forcing loading to false');
+      setIsLoading(false);
+    }, 2000); // 2 second timeout
     
-    return () => {
-      mounted = false;
-      clearTimeout(timeout);
-    };
+    return () => clearTimeout(timeout);
   }, []); // Run only once on mount
 
   const createDefaultUsers = async () => {
