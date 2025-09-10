@@ -1,7 +1,5 @@
 import { Stack } from "expo-router";
 import { useEffect, useState } from "react";
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet } from "react-native";
 import Colors from "@/constants/colors";
 import { AuthProvider } from '@/store/auth';
 import AuthGuard from '@/components/AuthGuard';
@@ -66,14 +64,19 @@ function RootLayoutNav() {
           }} 
         />
         <Stack.Screen 
-          name="backend-test" 
+          name="admin-management" 
           options={{ 
-            title: "Backend Test",
+            title: "Admin Management",
             headerBackTitle: "Back",
+          }} 
+        />
+        <Stack.Screen 
+          name="modal" 
+          options={{ 
+            presentation: "modal",
+            title: "Modal",
           }} 
         />
       </Stack>
   );
 }
-
-const styles = StyleSheet.create({});
