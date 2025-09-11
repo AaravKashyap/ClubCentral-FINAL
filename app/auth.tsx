@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -23,9 +23,17 @@ export default function AuthScreen() {
   const [selectedRole, setSelectedRole] = useState<UserRole>('student');
   const [clubName, setClubName] = useState('');
   
-  const { login, signup, isLoading } = useAuth();
+  const { login, signup, isLoading, isAuthenticated } = useAuth();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+
+  // If user is already authenticated, redirect to tabs
+  useEffect(() => {
+    if (isAuthenticated) {
+      console.log('[AuthScreen] User is authenticated, redirecting to tabs');
+      router.replace('/(tabs)');
+    }
+  }, [isAuthenticated, router]);
 
   const handleAuth = async () => {
     if (!email || !password || (!isLogin && !name)) {

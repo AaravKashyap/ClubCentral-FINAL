@@ -42,9 +42,9 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
     
     // Fallback timeout to prevent infinite loading
     const timeout = setTimeout(() => {
-      console.warn('[Auth] App initialization timeout (2s), forcing loading to false');
+      console.warn('[Auth] App initialization timeout (1s), forcing loading to false');
       setIsLoading(false);
-    }, 2000); // 2 second timeout
+    }, 1000); // 1 second timeout
     
     return () => clearTimeout(timeout);
   }, []); // Run only once on mount
